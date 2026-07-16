@@ -2007,6 +2007,253 @@
     #aishorts { padding: 70px 24px; }
   }
 
+
+  /* ── PROJECTS SECTION ── */
+  #projects {
+    background: var(--cream);
+    padding: 100px 52px;
+    border-top: 1px solid var(--fog-2);
+  }
+
+  .projects-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 28px;
+    margin-top: 56px;
+  }
+
+  .project-card {
+    position: relative;
+    overflow: hidden;
+    text-decoration: none;
+    display: block;
+    transition: transform 0.32s ease, box-shadow 0.32s ease;
+  }
+  .project-card:hover { transform: translateY(-6px); box-shadow: 0 24px 56px rgba(0,0,0,0.14); }
+
+  /* AI ODYSSEY — deep space dark */
+  .project-card.odyssey {
+    background: linear-gradient(168deg, #060A20 0%, #14205C 60%, #22348e 130%);
+    border-top: 4px solid #E8B44A;
+    padding: 44px 40px 36px;
+    color: #fff;
+  }
+  .project-card.odyssey .proj-eyebrow {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: #E8B44A;
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .project-card.odyssey .proj-eyebrow::before { content:''; width:20px; height:1px; background:#E8B44A; }
+  .project-card.odyssey .proj-title {
+    font-family: var(--serif);
+    font-size: clamp(26px, 3vw, 36px);
+    font-weight: 300;
+    line-height: 1.15;
+    color: #fff;
+    margin-bottom: 6px;
+    letter-spacing: 0.01em;
+  }
+  .project-card.odyssey .proj-subtitle {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #AAB8F0;
+    margin-bottom: 20px;
+  }
+  .project-card.odyssey .proj-desc {
+    font-size: 14px;
+    line-height: 1.75;
+    color: rgba(219,226,255,0.7);
+    font-weight: 300;
+    margin-bottom: 28px;
+    max-width: 420px;
+  }
+  .project-card.odyssey .proj-stats {
+    display: flex;
+    gap: 28px;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+  }
+  .proj-stat { text-align: left; }
+  .proj-stat-num {
+    font-family: var(--sans);
+    font-size: 24px;
+    font-weight: 300;
+    color: #E8B44A;
+    line-height: 1;
+    display: block;
+  }
+  .proj-stat-lbl {
+    font-family: var(--mono);
+    font-size: 8px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.4);
+    margin-top: 3px;
+    display: block;
+  }
+  .project-card.odyssey .proj-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 24px;
+    border: 1px solid rgba(232,180,74,0.5);
+    color: #E8B44A;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: all 0.25s;
+    position: relative;
+    overflow: hidden;
+  }
+  .project-card.odyssey .proj-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: #E8B44A;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+  }
+  .project-card.odyssey:hover .proj-btn::before { transform: translateX(0); }
+  .project-card.odyssey:hover .proj-btn { color: #060A20; }
+  .project-card.odyssey .proj-btn span { position: relative; z-index: 1; }
+  .project-card.odyssey .proj-btn::after { content: '→'; position: relative; z-index: 1; }
+
+  /* Decorative orbit in odyssey card */
+  .odyssey-orbit {
+    position: absolute;
+    right: -60px; top: -60px;
+    width: 260px; height: 260px;
+    border-radius: 50%;
+    border: 1px solid rgba(232,180,74,0.15);
+    pointer-events: none;
+  }
+  .odyssey-orbit-2 {
+    position: absolute;
+    right: -100px; top: -100px;
+    width: 360px; height: 360px;
+    border-radius: 50%;
+    border: 1px dashed rgba(170,184,240,0.1);
+    pointer-events: none;
+  }
+  .odyssey-star {
+    position: absolute;
+    border-radius: 50%;
+    background: #E8B44A;
+    pointer-events: none;
+  }
+
+  /* AI GAMES — bright playful */
+  .project-card.games {
+    background: #fff;
+    border-top: 4px solid #FFCF00;
+    border: 1px solid #E4E4E1;
+    border-top: 4px solid #FFCF00;
+    padding: 44px 40px 36px;
+  }
+  .project-card.games .proj-eyebrow {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: #D6001C;
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .project-card.games .proj-eyebrow::before { content:''; width:20px; height:1px; background:#D6001C; }
+  .project-card.games .proj-title {
+    font-family: var(--serif);
+    font-size: clamp(26px, 3vw, 36px);
+    font-weight: 600;
+    line-height: 1.15;
+    color: #1B1B1B;
+    margin-bottom: 6px;
+  }
+  .project-card.games .proj-subtitle {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #0063C6;
+    margin-bottom: 20px;
+  }
+  .project-card.games .proj-desc {
+    font-size: 14px;
+    line-height: 1.75;
+    color: #5a5a6a;
+    font-weight: 300;
+    margin-bottom: 28px;
+    max-width: 420px;
+  }
+  .project-card.games .proj-stats {
+    display: flex;
+    gap: 28px;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+  }
+  .project-card.games .proj-stat-num { color: #D6001C; }
+  .project-card.games .proj-stat-lbl { color: #999; }
+  .project-card.games .proj-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 28px;
+  }
+  .project-card.games .proj-tag {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 2px;
+    font-weight: 600;
+  }
+  .project-card.games .proj-tag.yellow { background: #FFCF00; color: #1B1B1B; }
+  .project-card.games .proj-tag.red { background: #D6001C; color: #fff; }
+  .project-card.games .proj-tag.blue { background: #0063C6; color: #fff; }
+  .project-card.games .proj-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 24px;
+    background: #FFCF00;
+    color: #1B1B1B;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    text-decoration: none;
+    font-weight: 700;
+    transition: all 0.25s;
+  }
+  .project-card.games .proj-btn:hover { background: #D6001C; color: #fff; }
+  .project-card.games .proj-btn::after { content: '→'; margin-left: 4px; }
+
+  /* Decorative game elements */
+  .games-joystick {
+    position: absolute;
+    top: 24px; right: 28px;
+    font-size: 36px;
+    opacity: 0.12;
+    pointer-events: none;
+  }
+
+  @media (max-width: 768px) {
+    .projects-grid { grid-template-columns: 1fr; }
+    #projects { padding: 70px 24px; }
+  }
+
 </style>
 </head>
 <body>
@@ -2020,6 +2267,8 @@
     <li><a href="#writing">Writing</a></li>
     <li><a href="#timeline">Journey</a></li>
     <li><a href="#tool">StratIQ Tool</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#projects">Projects</a></li>
     <li><a href="#aishorts">AI Shorts</a></li>
     <li><a href="#ethics">Ethics</a></li>
     <li><a href="#contact">Connect</a></li>
@@ -2694,6 +2943,80 @@
 </section>
 
 
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="section-label">Interactive Projects</div>
+  <h2 class="section-title">Beyond the <em>written word</em></h2>
+  <div class="projects-grid">
+
+    <!-- AI ODYSSEY -->
+    <a href="ai-odyssey.html" class="project-card odyssey" target="_blank" rel="noopener">
+      <!-- Decorative elements -->
+      <div class="odyssey-orbit"></div>
+      <div class="odyssey-orbit-2"></div>
+      <div class="odyssey-star" style="width:4px;height:4px;top:30%;left:75%;opacity:0.8;"></div>
+      <div class="odyssey-star" style="width:6px;height:6px;top:15%;left:60%;opacity:0.6;background:#AAB8F0;"></div>
+      <div class="odyssey-star" style="width:3px;height:3px;top:50%;left:85%;opacity:0.9;"></div>
+
+      <div class="proj-eyebrow">Book &amp; Learning Experience</div>
+      <div class="proj-title">AI Odyssey</div>
+      <div class="proj-subtitle">The Complete Master Edition</div>
+      <p class="proj-desc">
+        A student's field guide to the past, present, and future of Artificial Intelligence. From the birth of neural networks to the age of large language models — AI Odyssey takes readers on a structured, immersive journey through every era and idea that shaped the AI revolution. Written for curious minds, built for serious learners.
+      </p>
+      <div class="proj-stats">
+        <div class="proj-stat">
+          <span class="proj-stat-num">Master</span>
+          <span class="proj-stat-lbl">Edition</span>
+        </div>
+        <div class="proj-stat">
+          <span class="proj-stat-num">A–Z</span>
+          <span class="proj-stat-lbl">AI Concepts</span>
+        </div>
+        <div class="proj-stat">
+          <span class="proj-stat-num">Free</span>
+          <span class="proj-stat-lbl">To Explore</span>
+        </div>
+      </div>
+      <div class="proj-btn"><span>Explore AI Odyssey</span></div>
+    </a>
+
+    <!-- AI GAMES -->
+    <a href="index-games.html" class="project-card games" target="_blank" rel="noopener">
+      <div class="games-joystick">🕹</div>
+
+      <div class="proj-eyebrow">Gamified Learning Platform</div>
+      <div class="proj-title">AI Games</div>
+      <div class="proj-subtitle">Learning You Can Play!</div>
+      <p class="proj-desc">
+        A bright, playful arcade of browser-based learning games designed to make AI literacy fun and sticky. Play the RIO Retail Ops Quiz, tackle the KYC Challenge, and test your AI knowledge across multiple game formats — all free, all in your browser, no downloads needed. Learning through play is learning that lasts.
+      </p>
+      <div class="proj-stats">
+        <div class="proj-stat">
+          <span class="proj-stat-num">Free</span>
+          <span class="proj-stat-lbl">In Browser</span>
+        </div>
+        <div class="proj-stat">
+          <span class="proj-stat-num">Multi</span>
+          <span class="proj-stat-lbl">Game Formats</span>
+        </div>
+        <div class="proj-stat">
+          <span class="proj-stat-num">Play</span>
+          <span class="proj-stat-lbl">Now</span>
+        </div>
+      </div>
+      <div class="proj-tags">
+        <span class="proj-tag yellow">Quiz</span>
+        <span class="proj-tag red">KYC Challenge</span>
+        <span class="proj-tag blue">RIO Retail Ops</span>
+      </div>
+      <div class="proj-btn">Play AI Games</div>
+    </a>
+
+  </div>
+</section>
+
+
 <!-- AISHORTS -->
 <section id="aishorts">
   <div class="aishorts-bg-text">AI</div>
@@ -2753,6 +3076,8 @@
     <li><a href="#expertise">Expertise</a></li>
     <li><a href="#writing">Writing</a></li>
     <li><a href="#tool">StratIQ Tool</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#projects">Projects</a></li>
     <li><a href="#aishorts">AI Shorts</a></li>
     <li><a href="#contact">Contact</a></li>
   </ul>
@@ -2829,7 +3154,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // ── Arc nav active section highlight ──
-    var sections = ['hero','about','expertise','writing','timeline','tool','certifications','aishorts','ethics','contact'];
+    var sections = ['hero','about','expertise','writing','timeline','tool','certifications','projects','aishorts','ethics','contact'];
     var arcItems = document.querySelectorAll('.arc-item');
     var current = '';
     sections.forEach(function(id) {
@@ -3282,6 +3607,10 @@ function onGFormSubmit(e) {
   </div>
   <div class="arc-item" onclick="document.getElementById('certifications').scrollIntoView({behavior:'smooth'})">
     <div class="arc-label">Certifications</div>
+    <div class="arc-dot"><div class="arc-dot-inner"></div></div>
+  </div>
+  <div class="arc-item" onclick="document.getElementById('projects').scrollIntoView({behavior:'smooth'})">
+    <div class="arc-label">Projects</div>
     <div class="arc-dot"><div class="arc-dot-inner"></div></div>
   </div>
   <div class="arc-item" onclick="document.getElementById('aishorts').scrollIntoView({behavior:'smooth'})">

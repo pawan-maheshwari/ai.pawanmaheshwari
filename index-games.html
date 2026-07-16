@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#FFCF00">
+<title>AI Games — Learning you can play!</title>
+<meta name="description" content="AI Games by Planet AI — a bright, playful arcade of learning games. Play RIO Retail Ops Quiz and the KYC Challenge free in your browser.">
+<link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 72 66"><rect x="10" y="0" width="16" height="14" rx="4" fill="%23D6001C"/><rect x="46" y="0" width="16" height="14" rx="4" fill="%23D6001C"/><rect x="0" y="8" width="72" height="58" rx="13" fill="%23D6001C"/><path d="M27 20 L41 54 L13 54 Z M27 36 a5.5 5.5 0 1 0 .01 0 Z" fill="%23fff" fill-rule="evenodd"/><rect x="45" y="52" width="17" height="4.5" rx="2.2" fill="%23fff"/><rect x="50" y="33" width="7" height="20" rx="3.5" fill="%23fff" transform="rotate(7 53.5 53)"/><circle cx="55" cy="27" r="8" fill="%23FFCF00"/><circle cx="52.4" cy="24.4" r="2.3" fill="%23fff" opacity=".85"/></svg>'>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --yellow:#FFCF00;
+  --red:#D6001C;
+  --blue:#0063C6;
+  --blue-dark:#00498F;
+  --green:#00963E;
+  --ink:#1B1B1B;
+  --grey:#6E6E6E;
+  --bg:#FFFFFF;
+  --soft:#F6F6F4;
+  --line:#E4E4E1;
+  --navy:#17233A;
+  --r:14px;
+  --f:'Nunito',system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:var(--f);font-weight:600;line-height:1.5;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
+video{display:block;max-width:100%}
+:focus-visible{outline:3px solid var(--blue);outline-offset:2px;border-radius:6px}
+.wrap{max-width:1060px;margin:0 auto;padding:0 20px}
+
+/* ---------- yellow header bar ---------- */
+.bar{background:var(--yellow);position:sticky;top:0;z-index:50;box-shadow:0 1px 0 rgba(0,0,0,.08)}
+.bar-in{display:flex;align-items:center;gap:18px;height:62px}
+.logo-tile{flex:none;width:50px;height:46px;display:flex;align-items:center;justify-content:center;filter:drop-shadow(0 2px 0 rgba(0,0,0,.22));transition:transform .15s}
+.logo-tile:hover{transform:rotate(-4deg) scale(1.05)}
+.logo-tile svg{width:100%;height:100%}
+.bar-name{font-weight:900;font-size:19px;letter-spacing:-.01em}
+.bar-links{margin-left:auto;display:flex;gap:22px;font-weight:800;font-size:14.5px}
+.bar-links a{padding:6px 2px;border-bottom:3px solid transparent}
+.bar-links a:hover{border-color:var(--ink)}
+@media(max-width:620px){.bar-links{display:none}}
+
+/* ---------- breadcrumb ---------- */
+.crumbs{padding:16px 0 0;font-size:13px;color:var(--grey)}
+.crumbs b{color:var(--ink);font-weight:800}
+
+/* ---------- hero ---------- */
+.hero{display:grid;grid-template-columns:1fr 1.1fr;gap:34px;align-items:center;padding:30px 0 12px}
+@media(max-width:760px){.hero{grid-template-columns:1fr;gap:20px}}
+.hero h1{font-weight:900;font-size:clamp(28px,4.4vw,42px);line-height:1.12;letter-spacing:-.015em}
+.hero h1 span{color:var(--red)}
+.hero p{margin-top:12px;font-size:16px;color:#3c3c3c;max-width:460px}
+.hero-cta{display:flex;gap:12px;margin-top:20px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:8px;font-weight:900;font-size:15px;padding:12px 26px;border-radius:999px;transition:transform .12s,background .15s}
+.btn:active{transform:scale(.97)}
+.btn-primary{background:var(--blue);color:#fff}
+.btn-primary:hover{background:var(--blue-dark)}
+.btn-outline{border:2.5px solid var(--ink);color:var(--ink)}
+.btn-outline:hover{background:var(--ink);color:#fff}
+.hero-media{position:relative;border-radius:18px;overflow:hidden;box-shadow:0 14px 34px rgba(23,35,58,.18)}
+.hero-media video{width:100%;height:clamp(220px,32vw,340px);object-fit:cover}
+.mute-btn{position:absolute;right:12px;bottom:12px;width:42px;height:42px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 10px rgba(0,0,0,.25)}
+.mute-btn svg{width:20px;height:20px;fill:var(--ink)}
+.mute-btn .on-ic{display:none}
+.mute-btn.on{background:var(--yellow)}
+.mute-btn.on .on-ic{display:block}
+.mute-btn.on .off-ic{display:none}
+.hero-note{position:absolute;left:12px;top:12px;background:var(--yellow);color:var(--ink);font-weight:900;font-size:12px;padding:6px 13px;border-radius:999px;box-shadow:0 2px 6px rgba(0,0,0,.2)}
+
+/* ---------- stud divider (brick signature) ---------- */
+.studs{display:flex;gap:14px;justify-content:center;padding:26px 0 6px}
+.studs i{width:16px;height:16px;border-radius:50%;background:var(--yellow);box-shadow:inset 0 -3px 0 rgba(0,0,0,.14)}
+.studs i:nth-child(2){background:var(--red)}
+.studs i:nth-child(3){background:var(--blue)}
+.studs i:nth-child(4){background:var(--green)}
+
+/* ---------- quick pills ---------- */
+.pills{display:flex;gap:10px;overflow-x:auto;padding:16px 0 6px;scrollbar-width:none}
+.pills::-webkit-scrollbar{display:none}
+.pill{flex:none;background:var(--soft);border:1.5px solid var(--line);border-radius:999px;padding:9px 20px;font-weight:800;font-size:14px;cursor:pointer;transition:background .15s,border-color .15s,transform .12s}
+.pill:hover{border-color:var(--ink)}
+.pill:active{transform:scale(.96)}
+.pill.active{background:var(--ink);border-color:var(--ink);color:#fff}
+.card.hide{display:none}
+
+/* ---------- sections ---------- */
+section{padding:30px 0 6px}
+.sec-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:18px}
+.sec-head h2{font-weight:900;font-size:clamp(22px,3vw,28px);letter-spacing:-.015em}
+.sec-head .count{font-size:13.5px;color:var(--grey);font-weight:700}
+
+/* ---------- game cards ---------- */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:22px}
+.card{background:#fff;border:1.5px solid var(--line);border-radius:var(--r);overflow:hidden;display:flex;flex-direction:column;transition:transform .15s,box-shadow .15s}
+.card:hover{transform:translateY(-4px);box-shadow:0 14px 30px rgba(23,35,58,.14)}
+.card-top{position:relative;height:190px;display:flex;align-items:center;justify-content:center}
+/* stud row on every card art — the brick signature */
+.card-top::before{content:"";position:absolute;top:10px;left:14px;right:14px;height:12px;
+  background:radial-gradient(circle 6px at 6px 6px,rgba(255,255,255,.4) 98%,transparent) 0 0/28px 12px repeat-x}
+.art-rio{background:var(--yellow)}
+.art-rio::before{background:radial-gradient(circle 6px at 6px 6px,rgba(0,0,0,.14) 98%,transparent) 0 0/28px 12px repeat-x}
+.art-rio .big{font-weight:900;font-size:56px;color:var(--ink);letter-spacing:-.02em}
+.art-rio .strip{position:absolute;bottom:0;left:0;right:0;height:20px;background:repeating-linear-gradient(45deg,var(--ink) 0 14px,var(--yellow) 14px 28px)}
+.art-kyc{background:var(--green)}
+.art-kyc .big{font-weight:900;font-size:56px;color:#fff;letter-spacing:-.02em}
+.art-kyc .strip{position:absolute;bottom:0;left:0;right:0;height:6px;background:var(--yellow)}
+.art-soon{background:var(--soft)}
+.art-soon .big{font-weight:900;font-size:44px;color:#c9c9c4}
+/* new game posters — flat brand colors, big emoji marks */
+.art-c{position:relative}
+.art-c .big{font-size:54px}
+.art-c .kicker{color:rgba(255,255,255,.85)}
+.art-c .strip{position:absolute;bottom:0;left:0;right:0;height:6px;background:rgba(255,255,255,.35)}
+.art-purple{background:#7A3E9D}
+.art-navy{background:#17233A}
+.art-orange{background:#E8710A}
+.art-sky{background:#009FDA}
+.art-crimson{background:#B0003A}
+.art-teal{background:#00858C}
+.art-slate{background:#3B4C68}
+.art-rust{background:#A34A21}
+.art-forest{background:#1E5E3A}
+.art-indigo{background:#4A47C6}
+.art-magenta{background:#B5179E}
+.card-top .kicker{position:absolute;top:30px;left:16px;font-weight:900;font-size:11px;letter-spacing:.16em;text-transform:uppercase}
+
+/* ---------- living posters ---------- */
+@keyframes floaty{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-9px) rotate(-2deg)}}
+@keyframes sheen{0%,55%{transform:translateX(-130%) skewX(-18deg)}75%,100%{transform:translateX(230%) skewX(-18deg)}}
+@keyframes hazardScroll{from{background-position:0 0}to{background-position:56px 0}}
+@keyframes badgePulse{0%,100%{transform:scale(1)}50%{transform:scale(1.09)}}
+@keyframes studGlow{0%,100%{opacity:1}50%{opacity:.45}}
+.card-top .big{animation:floaty 3.4s ease-in-out infinite;will-change:transform}
+.grid .card:nth-child(2) .big{animation-delay:.4s}
+.grid .card:nth-child(3) .big{animation-delay:.8s}
+.grid .card:nth-child(4) .big{animation-delay:1.2s}
+.grid .card:nth-child(5) .big{animation-delay:1.6s}
+.grid .card:nth-child(6) .big{animation-delay:2s}
+.grid .card:nth-child(7) .big{animation-delay:.6s}
+.grid .card:nth-child(8) .big{animation-delay:1s}
+.grid .card:nth-child(9) .big{animation-delay:1.4s}
+.grid .card:nth-child(10) .big{animation-delay:1.8s}
+.grid .card:nth-child(11) .big{animation-delay:2.2s}
+/* light sweep across every poster */
+.card-top::after{content:"";position:absolute;top:0;bottom:0;left:0;width:36%;pointer-events:none;
+  background:linear-gradient(100deg,transparent 0%,rgba(255,255,255,.34) 50%,transparent 100%);
+  transform:translateX(-130%) skewX(-18deg);animation:sheen 5.6s ease-in-out infinite}
+.grid .card:nth-child(even) .card-top::after{animation-delay:2.8s}
+/* RIO: hazard stripe rolls like a conveyor */
+.art-rio .strip{animation:hazardScroll 2.6s linear infinite}
+/* stud rows twinkle softly */
+.card-top::before{animation:studGlow 4s ease-in-out infinite}
+/* badges breathe */
+.badge-new{animation:badgePulse 2.2s ease-in-out infinite}
+/* hover: the mark leans in */
+.card:hover .big{animation-play-state:paused;transform:translateY(-6px) scale(1.12) rotate(-3deg);transition:transform .25s}
+.art-rio .kicker{color:rgba(0,0,0,.55)}
+.art-kyc .kicker{color:rgba(255,255,255,.85)}
+.badge-new{position:absolute;top:26px;right:14px;background:var(--red);color:#fff;font-weight:900;font-size:11px;padding:5px 12px;border-radius:999px}
+.card-body{padding:16px 18px 18px;display:flex;flex-direction:column;gap:6px;flex:1}
+.card-body h3{font-weight:900;font-size:18px;letter-spacing:-.01em}
+.card-body .sub{font-size:13.5px;color:var(--grey)}
+.card-body .desc{font-size:14px;color:#3c3c3c;margin-top:2px}
+.card-foot{display:flex;align-items:center;justify-content:space-between;margin-top:auto;padding-top:14px}
+.card-foot .free{font-weight:800;font-size:12.5px;color:var(--green)}
+.play-btn{background:var(--blue);color:#fff;font-weight:900;font-size:14px;padding:10px 24px;border-radius:999px;transition:background .15s,transform .12s}
+.play-btn:hover{background:var(--blue-dark)}
+.play-btn:active{transform:scale(.96)}
+.play-btn.soon{background:var(--soft);color:#a8a8a2;cursor:default}
+
+/* ---------- yellow band ---------- */
+.band{background:var(--yellow);margin-top:40px;padding:36px 0}
+.band-in{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.band h2{font-weight:900;font-size:clamp(20px,3vw,26px)}
+.band p{font-size:14.5px;color:#3a3400;margin-top:4px;max-width:520px}
+.band .btn-primary{background:var(--ink)}
+.band .btn-primary:hover{background:#000}
+
+/* ---------- prose ---------- */
+.prose{padding:36px 0 4px}
+.prose h3{font-weight:900;font-size:20px;margin-bottom:8px}
+.prose p{font-size:15px;color:#3c3c3c;max-width:660px;margin-bottom:10px}
+.prose a{color:var(--blue);font-weight:800}
+.prose a:hover{text-decoration:underline}
+
+/* ---------- footer ---------- */
+footer{background:var(--navy);color:#fff;margin-top:48px;padding:40px 0 30px}
+.f-grid{display:grid;grid-template-columns:1.2fr 1fr 1fr 1fr;gap:26px}
+@media(max-width:760px){.f-grid{grid-template-columns:1fr 1fr}}
+.f-brand{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.f-brand .logo-tile{width:40px;height:40px}
+.f-brand b{font-weight:900;font-size:17px}
+.f-grid h4{font-weight:900;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:#9FB0CC;margin-bottom:10px}
+.f-grid ul{list-style:none}
+.f-grid li{margin-bottom:8px}
+.f-grid a{font-size:14px;color:#DCE4F2}
+.f-grid a:hover{text-decoration:underline}
+.f-legal{border-top:1px solid rgba(255,255,255,.15);margin-top:28px;padding-top:18px;font-size:12px;color:#9FB0CC;font-weight:600}
+
+/* ---------- modal ---------- */
+.modal{position:fixed;inset:0;z-index:100;background:#fff;display:none;flex-direction:column}
+.modal.open{display:flex}
+.mbar{flex:none;display:flex;align-items:center;justify-content:space-between;gap:12px;height:54px;padding:0 16px;background:var(--yellow)}
+.mbar .mt{font-weight:900;font-size:15.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mbar .done{background:var(--ink);color:#fff;font-weight:900;font-size:13px;padding:8px 20px;border-radius:999px}
+.mbar .done:hover{background:#000}
+.modal iframe{flex:1;width:100%;border:0;background:#fff}
+
+/* ---------- anchor fix: sections were scrolling under the sticky bar ---------- */
+section[id],div[id="top"]{scroll-margin-top:78px}
+
+/* ---------- mobile menu ---------- */
+.menu-btn{display:none;margin-left:auto;width:42px;height:42px;border-radius:10px;background:rgba(0,0,0,.08);align-items:center;justify-content:center}
+.menu-btn svg{width:22px;height:22px;fill:var(--ink)}
+@media(max-width:620px){
+  .menu-btn{display:flex}
+  .bar-links{display:none;position:absolute;top:62px;left:0;right:0;background:var(--yellow);flex-direction:column;gap:0;padding:6px 20px 14px;box-shadow:0 10px 20px rgba(0,0,0,.15)}
+  .bar-links.open{display:flex}
+  .bar-links a{padding:12px 2px;border-bottom:1.5px solid rgba(0,0,0,.1);font-size:16px}
+}
+
+/* ---------- small screens & wide screens polish ---------- */
+@media(max-width:420px){
+  .hero h1{font-size:26px}
+  .card-top{height:170px}
+  .art-rio .big,.art-kyc .big{font-size:46px}
+  .band-in{flex-direction:column;align-items:flex-start}
+}
+@media(min-width:1400px){.wrap{max-width:1180px}}
+img,video,iframe{max-width:100%}
+
+/* ---------- back to top ---------- */
+.to-top{position:fixed;right:18px;bottom:88px;z-index:60;width:46px;height:46px;border-radius:50%;background:var(--ink);color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 16px rgba(0,0,0,.3);opacity:0;pointer-events:none;transform:translateY(8px);transition:opacity .2s,transform .2s}
+.to-top.show{opacity:1;pointer-events:auto;transform:none}
+.to-top svg{width:20px;height:20px;fill:#fff}
+.to-top:hover{background:#000}
+
+/* ---------- game bot ---------- */
+.bot-fab{position:fixed;right:14px;bottom:18px;z-index:60;display:flex;align-items:center;gap:9px;background:var(--red);color:#fff;font-weight:900;font-size:14px;padding:12px 18px;border-radius:999px;box-shadow:0 8px 20px rgba(214,0,28,.4);transition:transform .15s}
+.bot-fab:hover{transform:scale(1.05)}
+.bot-fab svg{width:20px;height:20px;fill:#fff}
+.bot{position:fixed;right:14px;bottom:18px;z-index:70;width:min(360px,calc(100vw - 28px));height:min(520px,calc(100dvh - 40px));background:#fff;border-radius:18px;box-shadow:0 20px 50px rgba(23,35,58,.35);display:none;flex-direction:column;overflow:hidden}
+.bot.open{display:flex}
+.bot-head{flex:none;display:flex;align-items:center;gap:11px;background:var(--yellow);padding:12px 14px}
+.bot-head .face{width:36px;height:36px;border-radius:50%;background:var(--red);display:flex;align-items:center;justify-content:center;flex:none}
+.bot-head .face svg{width:20px;height:20px;fill:#fff}
+.bot-head b{font-weight:900;font-size:15px}
+.bot-head small{display:block;font-size:11px;color:#5c5300;font-weight:700}
+.bot-head .x{margin-left:auto;width:32px;height:32px;border-radius:50%;background:rgba(0,0,0,.1);font-weight:900}
+.bot-log{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;background:var(--soft)}
+.msg{max-width:85%;padding:10px 13px;border-radius:14px;font-size:13.5px;line-height:1.45}
+.msg.bot-m{background:#fff;border:1.5px solid var(--line);border-bottom-left-radius:4px;align-self:flex-start}
+.msg.user-m{background:var(--blue);color:#fff;border-bottom-right-radius:4px;align-self:flex-end}
+.msg a{color:var(--blue);font-weight:800;text-decoration:underline}
+.msg.user-m a{color:#fff}
+.chips-row{display:flex;flex-wrap:wrap;gap:7px;align-self:flex-start}
+.qchip{background:#fff;border:1.5px solid var(--blue);color:var(--blue);font-weight:800;font-size:12px;padding:6px 13px;border-radius:999px}
+.qchip:hover{background:var(--blue);color:#fff}
+.bot-in{flex:none;display:flex;gap:8px;padding:10px;border-top:1.5px solid var(--line);background:#fff}
+.bot-in input{flex:1;border:1.5px solid var(--line);border-radius:999px;padding:10px 15px;font:inherit;font-size:13.5px;outline:none}
+.bot-in input:focus{border-color:var(--blue)}
+.bot-in button{flex:none;width:42px;height:42px;border-radius:50%;background:var(--red);display:flex;align-items:center;justify-content:center}
+.bot-in button svg{width:18px;height:18px;fill:#fff}
+
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important}html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+
+<!-- yellow header bar -->
+<nav class="bar">
+  <div class="wrap bar-in">
+    <a class="logo-tile" href="#top" aria-label="AI Games home">
+      <svg viewBox="0 0 72 66" aria-hidden="true">
+        <!-- brick silhouette -->
+        <rect x="10" y="0" width="16" height="14" rx="4" fill="#D6001C"/>
+        <rect x="46" y="0" width="16" height="14" rx="4" fill="#D6001C"/>
+        <rect x="0" y="8" width="72" height="58" rx="13" fill="#D6001C"/>
+        <!-- A = play button -->
+        <path d="M27 20 L41 54 L13 54 Z M27 36 a5.5 5.5 0 1 0 .01 0 Z" fill="#fff" fill-rule="evenodd"/>
+        <!-- i = joystick -->
+        <rect x="45" y="52" width="17" height="4.5" rx="2.2" fill="#fff"/>
+        <rect x="50" y="33" width="7" height="20" rx="3.5" fill="#fff" transform="rotate(7 53.5 53)"/>
+        <circle cx="55" cy="27" r="8" fill="#FFCF00"/>
+        <circle cx="52.4" cy="24.4" r="2.3" fill="#fff" opacity=".85"/>
+      </svg>
+    </a>
+    <span class="bar-name">AI Games</span>
+    <button class="menu-btn" id="menuBtn" aria-label="Menu" aria-expanded="false">
+      <svg viewBox="0 0 24 24"><path d="M3 6h18v2.4H3zM3 10.8h18v2.4H3zM3 15.6h18V18H3z"/></svg>
+    </button>
+    <div class="bar-links" id="barLinks">
+      <a href="#games">Games</a>
+      <a href="#about">About</a>
+      <a href="#vision">Vision</a>
+      <a href="#privacy">Privacy</a>
+    </div>
+  </div>
+</nav>
+
+<div class="wrap" id="top">
+
+  <!-- breadcrumb -->
+  <div class="crumbs">Home &nbsp;›&nbsp; <b>AI Games</b></div>
+
+  <!-- hero: text left, video right -->
+  <header class="hero">
+    <div>
+      <h1>Learning you can <span>play!</span></h1>
+      <p>Thirteen AI-built games, free in your browser. Master prompting, ethics, machine learning, retail operations, compliance, strategy — or just have fun with a puzzle — one fun round at a time.</p>
+      <div class="hero-cta">
+        <a class="btn btn-primary" href="#games">Play now</a>
+        <a class="btn btn-outline" href="#about">How it works</a>
+      </div>
+    </div>
+    <div class="hero-media">
+      <video id="heroVideo" src="assets/banner.mp4" autoplay muted loop playsinline></video>
+      <span class="hero-note">New games inside!</span>
+      <button class="mute-btn" id="soundToggle" aria-pressed="false" aria-label="Toggle theme music">
+        <svg class="off-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6h4l5 5V4L7 9H3zm13.6 3 3.2-3.2-1.4-1.4-3.2 3.2-3.2-3.2-1.4 1.4L13.8 12l-3.2 3.2 1.4 1.4 3.2-3.2 3.2 3.2 1.4-1.4L16.6 12z"/></svg>
+        <svg class="on-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.8-1-3.3-2.5-4.1v8.2c1.5-.8 2.5-2.3 2.5-4.1zM14 3.2v2.1c2.9.9 5 3.5 5 6.7s-2.1 5.8-5 6.7v2.1c4-.9 7-4.5 7-8.8s-3-7.9-7-8.8z"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- stud divider -->
+  <div class="studs" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+
+  <!-- category filters -->
+  <div class="pills" role="tablist" aria-label="Filter games by category">
+    <button class="pill active" data-filter="all" role="tab" aria-selected="true">🕹️ All Games</button>
+    <button class="pill" data-filter="skills" role="tab" aria-selected="false">🧠 AI Skills</button>
+    <button class="pill" data-filter="ethics" role="tab" aria-selected="false">🛡️ Ethics &amp; Fairness</button>
+    <button class="pill" data-filter="strategy" role="tab" aria-selected="false">♟️ Strategy</button>
+    <button class="pill" data-filter="sim" role="tab" aria-selected="false">🏭 Simulation</button>
+    <button class="pill" data-filter="retail" role="tab" aria-selected="false">🛒 Retail Ops</button>
+    <button class="pill" data-filter="teachers" role="tab" aria-selected="false">🎓 For Teachers</button>
+    <button class="pill" data-filter="fun" role="tab" aria-selected="false">🧩 Fun &amp; Puzzle</button>
+  </div>
+
+  <!-- games -->
+  <section id="games">
+    <div class="sec-head">
+      <h2>Our games</h2>
+      <span class="count">13 games · all free</span>
+    </div>
+    <div class="grid">
+
+      <article class="card">
+        <div class="card-top art-rio">
+          <span class="kicker">Retail Ops · Live Quiz</span>
+          <span class="badge-new">New</span>
+          <span class="big">RIO</span>
+          <span class="strip"></span>
+        </div>
+        <div class="card-body">
+          <h3>RIO — Rigor in Operation</h3>
+          <div class="sub">Quiz · Single player · 5-min rounds</div>
+          <p class="desc">A hi-vis, high-pressure quiz on retail operations. Fast rounds, hard questions — how sharp is your ops discipline?</p>
+          <div class="card-foot">
+            <span class="free">Free to play</span>
+            <button class="play-btn" data-game="games/rio-quiz.html" data-name="RIO — Rigor in Operation">Play now</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card-top art-kyc">
+          <span class="kicker">Woolworths SA</span>
+          <span class="badge-new">New</span>
+          <span class="big">KYC</span>
+          <span class="strip"></span>
+        </div>
+        <div class="card-body">
+          <h3>KYC Challenge</h3>
+          <div class="sub">Compliance · Multiplayer via QR</div>
+          <p class="desc">Know your customer, know your craft. Real-world KYC scenarios, QR-powered multiplayer, and confetti when you win.</p>
+          <div class="card-foot">
+            <span class="free">Free to play</span>
+            <button class="play-btn" data-game="games/kyc-woolworths-challenge.html" data-name="KYC Challenge">Play now</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card-top art-c art-purple">
+          <span class="kicker">AI Odyssey · Prompting</span>
+          <span class="big">🧙</span>
+          <span class="strip"></span>
+        </div>
+        <div class="card-body">
+          <h3>Prompt Wizard</h3>
+          <div class="sub">AI skills · Single player</div>
+          <p class="desc">Learn the craft of talking to AI. Cast better prompts, level up your wizardry, and watch your results transform.</p>
+          <div class="card-foot">
+            <span class="free">Free to play</span>
+            <button class="play-btn" data-game="games/prompt-wizard.html" data-name="Prompt Wizard">Play now</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card-top art-c art-navy">
+          <span class="kicker">AI Odyssey · Fairness</span>
+          <span class="big">🕵️</span>
+          <span class="strip"></span>
+        </div>
+        <div class="card-body">
+          <h3>Bias Buster</h3>
+          <div class="sub">AI ethics · Detective game</div>
+          <p class="desc">Put on your detective hat and hunt down hidden bias in AI systems. Can you spot what the machine got wrong?</p>
+          <div class="card-foot">
+            <span class="free">Free to play</span>
+            <button class="play-btn" data-game="games/bias-buster.html" data-name="Bias Buster">Play now</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card-top art-c art-orange">
+          <span class="kicker">AI Odyssey · History</span>
+          <span class="big">🕰️</span>
+          <span class="strip"></span>
+        </div>
+        <div class="card-body">
+          <h3>AI Time Travelers</h3>
+          <div class="sub">AI history · Adventure</div>
+          <p class="desc">Hop through the decades of AI — from Turing to transformers — and meet the breakthroughs that built today's AI.</p>
+          <div class="card-foot">
+            <span class="free">Free to play</span>
+            <button class="play-btn" data-game="games/ai-time-travelers.html" data-name="AI Time Travelers">Play now</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card-top art-c art-sky">
+          <span class="kicker">AI Odyssey · Machine Learning</span>
+          <span class="big">🐾</span>
+          <span class="strip"></span>
+        </div>
+        <div class="card-body">
+          <h3>ML Pet Trainer</h3>
+          <div class="sub">ML basics · Simulation</div>
+          <p class="desc">Train your very own machine-learning pet! Feed it data, reward good behaviour, and learn how models really learn.</p>
+          <div class="card-foot">
+            <span class="free">Free to play</span>
+            <button class="play-btn" data-game="games/ml-pet-trainer.html" data-name="ML Pet Trainer">Play now</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card-top art-c art-crimson">
+          <span class="kicker">AI Odyssey · Ethics</span>
+          <span class="big">🛡️</span>
+          <span class="strip"></span>
+        </div>
+        <div class="card-body">
+          <h3>Ethics Guardian</h3>
+          <div class="sub">AI ethics · Decision game</div>
+          <p class="desc">Stand guard over AI's toughest calls. Face real ethical dilemmas and decide what a responsible AI should do.</p>
+          <div class="card-foot">
+            <span class="free">Free to play</span>
+            <button class="play-btn" data-game="games/ethics-guardian.html" data-name="Ethics Guardian">Play now</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card-top art-c art-teal">
+          <span class="kicker">Teachers Edition</span>
+          <span class="big">🎓</span>
+          <span class="strip"></span>
+        </div>
+        <div class="card-body">
+          <h3>AI Spark Quest</h3>
+          <div class="sub">For educators · 3-level quest</div>
+          <p class="desc">A classroom-ready quest that helps teachers spark AI curiosity — three levels of challenges with sound and progression.</p>
+          <div class="card-foot">
+            <span class="free">Free to play</span>
+            <button class="play-btn" data-game="games/ai-spark-quest.html" data-name="AI Spark Quest — Teachers Edition">Play now</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card-top art-c art-slate">
+          <span class="kicker">Business Strategy</span>
+          <span class="badge-new">New</span>
+          <span class="big">✈️</span>
+          <span class="strip"></span>
+        </div>
+        <div class="card-body">
+          <h3>AETHERFORGE</h3>
+          <div class="sub">Strategy · AI business flight simulator</div>
+          <p class="desc">Take the controls of an AI-era business and fly it through market turbulence. Every decision changes your altitude.</p>
+          <div class="card-foot">
+            <span class="free">Free to play</span>
+            <button class="play-btn" data-game="games/aetherforge.html" data-name="AETHERFORGE">Play now</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card-top art-c art-rust">
+          <span class="kicker">Visual AI &amp; Logistics</span>
+          <span class="badge-new">New</span>
+          <span class="big">🏭</span>
+          <span class="strip"></span>
+        </div>
+        <div class="card-body">
+          <h3>DESYNCED</h3>
+          <div class="sub">Simulation · Drone factory</div>
+          <p class="desc">Design, automate and untangle a drone factory before the orders pile up. Visual AI meets logistics puzzle.</p>
+          <div class="card-foot">
+            <span class="free">Free to play</span>
+            <button class="play-btn" data-game="games/desynced.html" data-name="DESYNCED">Play now</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card-top art-c art-forest">
+          <span class="kicker">GenAI Executive Strategy</span>
+          <span class="badge-new">New</span>
+          <span class="big">♟️</span>
+          <span class="strip"></span>
+        </div>
+        <div class="card-body">
+          <h3>HORIZON</h3>
+          <div class="sub">Strategy · Executive simulator</div>
+          <p class="desc">Steer an enterprise through the GenAI wave. Scenario planning, tough trade-offs, and the long view — think like a CEO.</p>
+          <div class="card-foot">
+            <span class="free">Free to play</span>
+            <button class="play-btn" data-game="games/horizon-strategy.html" data-name="HORIZON — Strategy Simulator">Play now</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card-top art-c art-indigo">
+          <span class="kicker">Fun &amp; Puzzle · Arrows</span>
+          <span class="badge-new">New</span>
+          <span class="big">🧩</span>
+          <span class="strip"></span>
+        </div>
+        <div class="card-body">
+          <h3>Escape</h3>
+          <div class="sub">Arrows puzzle · Level-based</div>
+          <p class="desc">Clear the board, arrow by arrow, and find your way out. Simple to start, sneaky to master — how many levels can you escape?</p>
+          <div class="card-foot">
+            <span class="free">Free to play</span>
+            <button class="play-btn" data-game="games/arrows-escape.html" data-name="Escape — Arrows Puzzle">Play now</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card-top art-c art-magenta">
+          <span class="kicker">Fun &amp; Puzzle · Grid</span>
+          <span class="badge-new">New</span>
+          <span class="big">🌀</span>
+          <span class="strip"></span>
+        </div>
+        <div class="card-body">
+          <h3>Coil</h3>
+          <div class="sub">Trace puzzle · Level-based</div>
+          <p class="desc">Trace one unbroken path and fill every square on the grid. Easy to grasp, deviously moreish — can you coil the whole board?</p>
+          <div class="card-foot">
+            <span class="free">Free to play</span>
+            <button class="play-btn" data-game="games/coil.html" data-name="COIL — Trace the Sequence">Play now</button>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </section>
+</div>
+
+<!-- yellow band -->
+<div class="band">
+  <div class="wrap band-in">
+    <div>
+      <h2>Want a game built for your team?</h2>
+      <p>These games began as real workplace challenges. If your team could learn faster by playing, let's build one together.</p>
+    </div>
+    <a class="btn btn-primary" href="https://www.linkedin.com/in/pawan-maheshwari-4b9b4715" target="_blank" rel="noopener">Say hello on LinkedIn</a>
+  </div>
+</div>
+
+<div class="wrap">
+  <!-- about / vision / privacy -->
+  <section class="prose" id="about">
+    <h3>About AI Games</h3>
+    <p>AI Games is a small, curated arcade from <b>Planet AI</b>, created by Pawan Maheshwari. Every title is a self-contained browser game — no downloads, no accounts. Open, play, learn.</p>
+    <p>The games turn real skills — prompting, AI ethics, machine learning, retail operations, compliance, business strategy — into short, playable challenges you can finish in a coffee break.</p>
+  </section>
+
+  <section class="prose" id="vision">
+    <h3>Our vision</h3>
+    <p>The best way to learn a skill is to play it. We're building a growing arcade where serious workplace capability — rigor, compliance, judgment — is developed through joyful, game-shaped practice: built fast with AI, tested hard, and shared freely with learners and teams everywhere.</p>
+  </section>
+
+  <section class="prose" id="privacy">
+    <h3>Privacy</h3>
+    <p>This site sets no tracking cookies, runs no ads, and sells no data. Games run entirely in your browser; scores and progress stay on your device unless a game explicitly asks to share them (for example, QR multiplayer).</p>
+    <p>We follow privacy-by-design principles aligned with India's DPDP Act 2023. Questions? Reach out on <a href="https://www.linkedin.com/in/pawan-maheshwari-4b9b4715" target="_blank" rel="noopener">LinkedIn</a>.</p>
+  </section>
+
+  <section class="prose" id="cookies">
+    <h3>Data &amp; cookies</h3>
+    <p><b>Cookies:</b> AI Games sets no tracking or advertising cookies. There is no analytics script, no fingerprinting, and no third-party trackers on this site.</p>
+    <p><b>Local data:</b> some games save scores or progress in your browser's local storage so you can pick up where you left off. This data never leaves your device, and you can clear it anytime from your browser settings.</p>
+    <p><b>Third parties:</b> fonts are served by Google Fonts, and the site is hosted on GitHub Pages; each may log standard technical requests (like your IP address) to deliver the page. We receive none of this data.</p>
+  </section>
+</div>
+
+<!-- navy footer -->
+<footer>
+  <div class="wrap">
+    <div class="f-grid">
+      <div>
+        <div class="f-brand">
+          <span class="logo-tile">
+            <svg viewBox="0 0 72 66" aria-hidden="true">
+              <rect x="10" y="0" width="16" height="14" rx="4" fill="#D6001C"/>
+              <rect x="46" y="0" width="16" height="14" rx="4" fill="#D6001C"/>
+              <rect x="0" y="8" width="72" height="58" rx="13" fill="#D6001C"/>
+              <path d="M27 20 L41 54 L13 54 Z M27 36 a5.5 5.5 0 1 0 .01 0 Z" fill="#fff" fill-rule="evenodd"/>
+              <rect x="45" y="52" width="17" height="4.5" rx="2.2" fill="#fff"/>
+              <rect x="50" y="33" width="7" height="20" rx="3.5" fill="#fff" transform="rotate(7 53.5 53)"/>
+              <circle cx="55" cy="27" r="8" fill="#FFCF00"/>
+              <circle cx="52.4" cy="24.4" r="2.3" fill="#fff" opacity=".85"/>
+            </svg>
+          </span>
+          <b>AI Games</b>
+        </div>
+        <p style="font-size:13px;color:#9FB0CC">A Planet AI production.<br>Learning you can play.</p>
+      </div>
+      <div>
+        <h4>Explore</h4>
+        <ul>
+          <li><a href="#games">Our games</a></li>
+          <li><a href="#about">About</a></li>
+          <li><a href="#vision">Vision</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Legal</h4>
+        <ul>
+          <li><a href="#privacy">Privacy policy</a></li>
+          <li><a href="#cookies">Data &amp; cookies</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Follow us</h4>
+        <ul>
+          <li><a href="https://www.linkedin.com/in/pawan-maheshwari-4b9b4715" target="_blank" rel="noopener">LinkedIn</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="f-legal">
+      Planet AI LLP, Bengaluru, India. AI Games and the Ai brick mark are creations of Planet AI. Crafted by Pawan Maheshwari. ©2026 Planet AI LLP. All rights reserved. Use of this site signifies your agreement to play nicely.
+    </div>
+  </div>
+</footer>
+
+<!-- back to top -->
+<button class="to-top" id="toTop" aria-label="Back to top">
+  <svg viewBox="0 0 24 24"><path d="M12 4l8 8-1.7 1.7L13 8.4V20h-2V8.4l-5.3 5.3L4 12z"/></svg>
+</button>
+
+<!-- game bot -->
+<button class="bot-fab" id="botFab" aria-label="Open Game Bot">
+  <svg viewBox="0 0 24 24"><path d="M12 2a2 2 0 0 1 2 2v1h3a3 3 0 0 1 3 3v7a3 3 0 0 1-3 3h-2l-3 3-3-3H7a3 3 0 0 1-3-3V8a3 3 0 0 1 3-3h3V4a2 2 0 0 1 2-2zm-3.5 8a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm7 0a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3z"/></svg>
+  Game Bot
+</button>
+
+<div class="bot" id="bot" role="dialog" aria-label="Game Bot chat">
+  <div class="bot-head">
+    <span class="face"><svg viewBox="0 0 24 24"><path d="M12 2a2 2 0 0 1 2 2v1h3a3 3 0 0 1 3 3v7a3 3 0 0 1-3 3h-2l-3 3-3-3H7a3 3 0 0 1-3-3V8a3 3 0 0 1 3-3h3V4a2 2 0 0 1 2-2zm-3.5 8a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm7 0a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3z"/></svg></span>
+    <span><b>Game Bot</b><small>Your arcade guide · online</small></span>
+    <button class="x" id="botClose" aria-label="Close chat">✕</button>
+  </div>
+  <div class="bot-log" id="botLog"></div>
+  <div class="bot-in">
+    <input id="botInput" type="text" placeholder="Ask me about the arcade…" aria-label="Message Game Bot" autocomplete="off">
+    <button id="botSend" aria-label="Send"><svg viewBox="0 0 24 24"><path d="M3 20l18-8L3 4v6l12 2-12 2z"/></svg></button>
+  </div>
+</div>
+
+<!-- game player -->
+<div class="modal" id="gameModal" role="dialog" aria-modal="true" aria-label="Game player">
+  <div class="mbar">
+    <span class="mt" id="modalName">Game</span>
+    <button class="done" id="modalClose">✕ Exit</button>
+  </div>
+  <iframe id="gameFrame" title="Game" allow="camera; fullscreen"></iframe>
+</div>
+
+<script>
+/* ---- category filters ---- */
+const CATS={
+  'games/rio-quiz.html':'retail',
+  'games/kyc-woolworths-challenge.html':'retail',
+  'games/prompt-wizard.html':'skills',
+  'games/bias-buster.html':'ethics',
+  'games/ai-time-travelers.html':'skills',
+  'games/ml-pet-trainer.html':'skills sim',
+  'games/ethics-guardian.html':'ethics',
+  'games/ai-spark-quest.html':'teachers skills',
+  'games/aetherforge.html':'strategy sim',
+  'games/desynced.html':'sim strategy',
+  'games/horizon-strategy.html':'strategy',
+  'games/arrows-escape.html':'fun',
+  'games/coil.html':'fun'
+};
+const allCards=[...document.querySelectorAll('#games .card')];
+allCards.forEach(c=>{
+  const b=c.querySelector('[data-game]');
+  if(b)c.dataset.cat=CATS[b.dataset.game]||'';
+});
+const countEl=document.querySelector('#games .count');
+document.querySelectorAll('.pill').forEach(p=>{
+  p.addEventListener('click',()=>{
+    document.querySelectorAll('.pill').forEach(x=>{x.classList.remove('active');x.setAttribute('aria-selected','false');});
+    p.classList.add('active');p.setAttribute('aria-selected','true');
+    const f=p.dataset.filter;
+    let shown=0;
+    allCards.forEach(c=>{
+      const show=f==='all'||(c.dataset.cat||'').split(' ').includes(f);
+      c.classList.toggle('hide',!show);
+      if(show)shown++;
+    });
+    countEl.textContent=f==='all'?'13 games · all free':shown+(shown===1?' game':' games')+' · all free';
+    document.getElementById('games').scrollIntoView({behavior:'smooth',block:'start'});
+  });
+});
+
+/* ---- game player ---- */
+const modal=document.getElementById('gameModal');
+const frame=document.getElementById('gameFrame');
+const modalName=document.getElementById('modalName');
+document.querySelectorAll('[data-game]').forEach(b=>{
+  b.addEventListener('click',()=>{
+    modalName.textContent=b.dataset.name;
+    frame.src=b.dataset.game;
+    modal.classList.add('open');
+    document.body.style.overflow='hidden';
+    if(musicOn)setMusic(false); /* don't clash with game audio */
+  });
+});
+document.getElementById('modalClose').addEventListener('click',closeModal);
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&modal.classList.contains('open'))closeModal();});
+function closeModal(){
+  modal.classList.remove('open');
+  frame.src='about:blank';
+  document.body.style.overflow='';
+}
+
+/* ---- theme music: bright, toy-like plucks (Web Audio) ---- */
+let ctx=null,musicOn=false,seqTimer=null,master=null;
+const toggle=document.getElementById('soundToggle');
+function initAudio(){
+  if(ctx)return;
+  ctx=new (window.AudioContext||window.webkitAudioContext)();
+  master=ctx.createGain();
+  master.gain.value=0.13;
+  master.connect(ctx.destination);
+}
+/* cheerful C-major toy-piano melody */
+const MELODY=[523.25,659.25,783.99,659.25, 698.46,659.25,587.33,523.25,
+              587.33,698.46,880.00,698.46, 783.99,698.46,659.25,523.25];
+let step=0;
+function pluck(){
+  const t=ctx.currentTime,f0=MELODY[step%16];
+  const o=ctx.createOscillator(),g=ctx.createGain(),lp=ctx.createBiquadFilter();
+  o.type='triangle';o.frequency.value=f0;
+  const o2=ctx.createOscillator(),g2=ctx.createGain();
+  o2.type='sine';o2.frequency.value=f0*3;g2.gain.value=0.18; /* toy sparkle */
+  lp.type='lowpass';lp.frequency.value=3200;
+  g.gain.setValueAtTime(0.0001,t);
+  g.gain.exponentialRampToValueAtTime(0.85,t+0.015);
+  g.gain.exponentialRampToValueAtTime(0.0001,t+0.42);
+  o.connect(g);o2.connect(g2);g2.connect(g);g.connect(lp);lp.connect(master);
+  o.start(t);o.stop(t+0.45);o2.start(t);o2.stop(t+0.45);
+  /* soft bass every 4 steps */
+  if(step%4===0){
+    const b=ctx.createOscillator(),bg=ctx.createGain();
+    b.type='sine';b.frequency.value=f0/4;
+    bg.gain.setValueAtTime(0.0001,t);
+    bg.gain.exponentialRampToValueAtTime(0.5,t+0.02);
+    bg.gain.exponentialRampToValueAtTime(0.0001,t+0.5);
+    b.connect(bg);bg.connect(master);b.start(t);b.stop(t+0.55);
+  }
+  step++;
+}
+function setMusic(on){
+  musicOn=on;
+  toggle.classList.toggle('on',on);
+  toggle.setAttribute('aria-pressed',on);
+  if(on){
+    initAudio();
+    if(ctx.state==='suspended')ctx.resume();
+    step=0;pluck();
+    seqTimer=setInterval(pluck,300);
+  }else{
+    clearInterval(seqTimer);seqTimer=null;
+  }
+}
+toggle.addEventListener('click',()=>setMusic(!musicOn));
+
+/* video stays muted; theme music replaces its audio */
+const vid=document.getElementById('heroVideo');
+vid.muted=true;vid.volume=0;
+
+/* ---- mobile menu ---- */
+const menuBtn=document.getElementById('menuBtn');
+const barLinks=document.getElementById('barLinks');
+menuBtn.addEventListener('click',()=>{
+  const open=barLinks.classList.toggle('open');
+  menuBtn.setAttribute('aria-expanded',open);
+});
+barLinks.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{
+  barLinks.classList.remove('open');
+  menuBtn.setAttribute('aria-expanded','false');
+}));
+
+/* ---- back to top ---- */
+const toTop=document.getElementById('toTop');
+window.addEventListener('scroll',()=>{
+  toTop.classList.toggle('show',window.scrollY>400);
+},{passive:true});
+toTop.addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));
+
+/* ---- Game Bot: rule-based arcade guide ---- */
+const bot=document.getElementById('bot');
+const botFab=document.getElementById('botFab');
+const botLog=document.getElementById('botLog');
+const botInput=document.getElementById('botInput');
+const CHIPS=['What games can I play?','Games about AI ethics?','Something for teachers?','Strategy games?','Is it free?','Privacy?'];
+const KB=[
+  {k:['escape','arrow','maze'],a:'🧩 <b>Escape</b> is our arrows puzzle — clear the board, arrow by arrow, and find your way out. Simple to start, sneaky to master!'},
+  {k:['coil','trace','grid','fill','sequence'],a:'🌀 <b>Coil</b> is a trace-the-sequence grid puzzle — draw one unbroken path and fill every square. Deviously moreish!'},
+  {k:['puzzle','fun','casual'],a:'For pure fun we have two puzzles: 🧩 <b>Escape</b> (arrows) and 🌀 <b>Coil</b> (fill the grid). Tap the <b>Fun &amp; Puzzle</b> filter to find them!'},
+  {k:['game','arcade','list','what games','all'],a:'We have <b>13 free games</b>! 🎮<br><b>AI skills:</b> 🧙 Prompt Wizard · 🐾 ML Pet Trainer · 🕰️ AI Time Travelers<br><b>Ethics:</b> 🕵️ Bias Buster · 🛡️ Ethics Guardian<br><b>Strategy:</b> ✈️ AETHERFORGE · ♟️ HORIZON · 🏭 DESYNCED<br><b>Workplace:</b> 🟡 RIO · 🟢 KYC Challenge<br><b>Teachers:</b> 🎓 AI Spark Quest<br><b>Fun:</b> 🧩 Escape · 🌀 Coil<br>Scroll to <a href="#games">Our games</a> and hit <b>Play now</b>!'},
+  {k:['rio','rigor','retail'],a:'<b>RIO — Rigor in Operation</b> is a hi-vis retail operations quiz. Rounds take about 5 minutes — answer fast, answer right, and see how sharp your ops discipline really is!'},
+  {k:['kyc','woolworths','compliance','customer'],a:'<b>KYC Challenge</b> (Woolworths SA edition) tests your Know-Your-Customer craft with real-world scenarios and QR-code multiplayer. Confetti guaranteed when you win! 🎉'},
+  {k:['prompt','wizard','prompting'],a:'🧙 <b>Prompt Wizard</b> teaches you the craft of talking to AI — cast better prompts and watch your results transform. Great first game if you\'re new to AI!'},
+  {k:['bias','buster','fair','fairness'],a:'🕵️ <b>Bias Buster</b> makes you the detective — hunt down hidden bias in AI systems and learn to spot what the machine got wrong.'},
+  {k:['time','traveler','history','turing'],a:'🕰️ <b>AI Time Travelers</b> takes you hopping through the decades of AI — from Turing to transformers — meeting the breakthroughs that built today\'s AI.'},
+  {k:['pet','trainer','ml ','machine learning','model'],a:'🐾 <b>ML Pet Trainer</b> lets you raise your own machine-learning pet! Feed it data, reward good behaviour, and learn how models really learn.'},
+  {k:['ethic','guardian','dilemma','responsible'],a:'🛡️ <b>Ethics Guardian</b> puts you on guard over AI\'s toughest calls — face real ethical dilemmas and decide what a responsible AI should do. Pairs nicely with 🕵️ <b>Bias Buster</b>!'},
+  {k:['teacher','spark','quest','classroom','educator','school','kid'],a:'🎓 <b>AI Spark Quest — Teachers Edition</b> is classroom-ready: a 3-level quest with sound and progression that helps educators spark AI curiosity in students.'},
+  {k:['aetherforge','flight','pilot','business sim'],a:'✈️ <b>AETHERFORGE</b> is our AI business flight simulator — take the controls of an AI-era business and fly it through market turbulence. Every decision changes your altitude!'},
+  {k:['desynced','drone','factory','logistics'],a:'🏭 <b>DESYNCED</b> is a visual AI &amp; logistics puzzle — design, automate and untangle a drone factory before the orders pile up.'},
+  {k:['horizon','executive','ceo','genai strategy'],a:'♟️ <b>HORIZON</b> is a GenAI executive strategy simulator — steer an enterprise through the GenAI wave with scenario planning and tough trade-offs. Think like a CEO!'},
+  {k:['strategy','simulator','simulation'],a:'For strategy fans we have three: ✈️ <b>AETHERFORGE</b> (business flight sim), ♟️ <b>HORIZON</b> (GenAI executive strategy) and 🏭 <b>DESYNCED</b> (logistics automation). All free — pick your challenge!'},
+  {k:['free','cost','price','pay','money'],a:'Everything here is <b>100% free</b> — all 13 games, no downloads, no accounts, no in-app purchases. Just open a game and play.'},
+  {k:['soon','coming','next','new game','future'],a:'The whole arcade is live — <b>13 playable games</b> right now, with 🌀 Coil as the newest arrival. More is always brewing in the Planet AI workshop!'},
+  {k:['privacy','data','cookie','track','dpdp'],a:'Short version: <b>no tracking cookies, no ads, no data selling</b>. Game progress stays on your device. Full details in <a href="#privacy">Privacy</a> and <a href="#cookies">Data &amp; cookies</a>.'},
+  {k:['music','sound','audio','mute','song'],a:'The banner video is muted by design — tap the round <b>speaker button</b> on it to toggle the arcade theme music. Games have their own sound too!'},
+  {k:['who','about','creator','pawan','planet ai','made'],a:'AI Games is a <b>Planet AI</b> production, created by <b>Pawan Maheshwari</b> — every title is an AI-built, self-contained browser game. More in <a href="#about">About</a>.'},
+  {k:['team','build','custom','enterprise','contact','hello','linkedin'],a:'Want a learning game built for your team? These games began as real workplace challenges. Say hello on <a href="https://www.linkedin.com/in/pawan-maheshwari-4b9b4715" target="_blank" rel="noopener">LinkedIn</a> and let\'s build one together!'},
+  {k:['mobile','phone','device','browser','work on'],a:'Yes! The whole arcade is responsive — it works on phones, tablets and desktops, in any modern browser. No install needed.'},
+  {k:['hi','hello','hey','namaste'],a:'Hey there, player one! 👋 Ask me anything about our 13 games — or tap a suggestion below.'},
+  {k:['thank','thanks','great','nice','awesome'],a:'Anytime! Now go beat that high score. 🏆'},
+];
+function botSay(html,withChips){
+  const m=document.createElement('div');
+  m.className='msg bot-m';m.innerHTML=html;
+  botLog.appendChild(m);
+  if(withChips){
+    const row=document.createElement('div');row.className='chips-row';
+    CHIPS.forEach(c=>{
+      const b=document.createElement('button');b.className='qchip';b.textContent=c;
+      b.addEventListener('click',()=>{userSay(c);answer(c);});
+      row.appendChild(b);
+    });
+    botLog.appendChild(row);
+  }
+  botLog.scrollTop=botLog.scrollHeight;
+}
+function userSay(text){
+  const m=document.createElement('div');
+  m.className='msg user-m';m.textContent=text;
+  botLog.appendChild(m);
+  botLog.scrollTop=botLog.scrollHeight;
+}
+function answer(q){
+  const s=q.toLowerCase();
+  let best=null,score=0;
+  KB.forEach(e=>{
+    const hits=e.k.filter(k=>s.includes(k)).length;
+    if(hits>score){score=hits;best=e;}
+  });
+  setTimeout(()=>{
+    if(best)botSay(best.a);
+    else botSay('Hmm, I\'m just a humble arcade bot! 🤖 I can help with the <b>games</b>, <b>how to play</b>, <b>privacy</b>, or <b>what\'s coming soon</b> — or reach the creator on <a href="https://www.linkedin.com/in/pawan-maheshwari-4b9b4715" target="_blank" rel="noopener">LinkedIn</a>.');
+  },350);
+}
+let botGreeted=false;
+botFab.addEventListener('click',()=>{
+  bot.classList.add('open');
+  botFab.style.display='none';
+  if(!botGreeted){
+    botGreeted=true;
+    botSay('Hi, I\'m <b>Game Bot</b> — your arcade guide! 🕹️ Ask me anything about AI Games, or pick a question:',true);
+  }
+  botInput.focus();
+});
+document.getElementById('botClose').addEventListener('click',()=>{
+  bot.classList.remove('open');
+  botFab.style.display='flex';
+});
+function sendMsg(){
+  const v=botInput.value.trim();
+  if(!v)return;
+  userSay(v);answer(v);
+  botInput.value='';
+}
+document.getElementById('botSend').addEventListener('click',sendMsg);
+botInput.addEventListener('keydown',e=>{if(e.key==='Enter')sendMsg();});
+</script>
+</body>
+</html>
