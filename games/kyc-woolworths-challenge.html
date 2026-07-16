@@ -1,0 +1,2320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KYC Challenge • Woolworths SA</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&amp;family=Poppins:wght@600&amp;display=swap');
+        
+        :root {
+            --wool-red: #111111;
+            --wool-gold: #111111;
+            --sa-green: #111111;
+        }
+        
+        body {
+            font-family: 'Inter', system_ui, sans-serif;
+        }
+        
+        .heading-font {
+            font-family: 'Poppins', system_ui, sans-serif;
+            font-weight: 700;
+            letter-spacing: -0.025em;
+        }
+
+        .african-pattern {
+            background-color: #f4f4f2;
+            background-image:
+                radial-gradient(circle at 100% 0, rgba(0,0,0,0.025), transparent 42%),
+                radial-gradient(circle at 0 100%, rgba(0,0,0,0.025), transparent 42%);
+        }
+        .wool-mark {
+            font-family: 'Poppins', system-ui, sans-serif;
+            font-weight: 700;
+            letter-spacing: 0.24em;
+        }
+
+        .game-card {
+            transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
+        }
+        
+        .game-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+        }
+
+        .option-btn {
+            transition: all 0.15s cubic-bezier(0.4, 0.0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .option-btn:hover:not(:disabled) {
+            transform: translateY(-2px) scale(1.01);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+        
+        .option-btn:active:not(:disabled) {
+            transform: scale(0.985);
+        }
+        
+        .option-btn.correct {
+            background-color: #16a34a !important;
+            color: white !important;
+            border-color: #15803d !important;
+        }
+        
+        .option-btn.wrong {
+            background-color: #dc2626 !important;
+            color: white !important;
+            border-color: #b91c1c !important;
+        }
+
+        .timer-circle {
+            transition: stroke-dashoffset 0.1s linear;
+        }
+
+        /* ---- 3D Lego-style puzzle ---- */
+        .puzzle-stage {
+            transform: rotateX(24deg) rotateZ(-3deg);
+            transform-style: preserve-3d;
+            transition: transform 0.6s ease;
+        }
+        .brick {
+            position: absolute;
+            transform-style: preserve-3d;
+            transition: transform 0.85s cubic-bezier(0.34, 1.35, 0.5, 1),
+                        opacity 0.5s ease;
+            will-change: transform;
+        }
+        .brick-top {
+            position: absolute;
+            inset: 0;
+            border-radius: 3px;
+            background-repeat: no-repeat;
+            transform: translateZ(var(--depth));
+            box-shadow: inset 0 0 0 1px rgba(255,255,255,0.12),
+                        inset 0 2px 6px rgba(255,255,255,0.16),
+                        inset 0 -3px 8px rgba(0,0,0,0.28);
+            overflow: hidden;
+        }
+        /* Extruded body walls give real depth under the tilt */
+        .brick-wall { position: absolute; background: #101010; }
+        .brick-wall.front {
+            left: 0; bottom: 0; width: 100%; height: var(--depth);
+            transform-origin: bottom center;
+            transform: rotateX(-90deg);
+            background: linear-gradient(#171717, #050505);
+        }
+        .brick-wall.right {
+            top: 0; right: 0; width: var(--depth); height: 100%;
+            transform-origin: center right;
+            transform: rotateY(90deg);
+            background: linear-gradient(90deg, #141414, #050505);
+        }
+        /* Lego studs on top */
+        .stud {
+            position: absolute;
+            width: 22%; height: 22%;
+            border-radius: 50%;
+            transform: translateZ(calc(var(--depth) + 5px));
+            background: radial-gradient(circle at 38% 32%,
+                        rgba(255,255,255,0.85), rgba(255,255,255,0.15) 55%, rgba(0,0,0,0.25) 100%);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.45), inset 0 -1px 2px rgba(0,0,0,0.3);
+            pointer-events: none;
+        }
+        .stud.dark {
+            background: radial-gradient(circle at 38% 32%,
+                        rgba(255,255,255,0.35), rgba(120,120,120,0.15) 55%, rgba(0,0,0,0.45) 100%);
+        }
+
+        .section-header {
+            background: linear-gradient(to right, #111111, #000000);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+        }
+
+        .leaderboard-item {
+            transition: all 0.2s ease;
+        }
+
+        .fun-fact-banner {
+            animation: slideUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.08);
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(40px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .kyc-header {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2c1810 100%);
+        }
+
+        .woolworths-red {
+            color: #111111;
+        }
+
+        .modern-shadow {
+            box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+        }
+
+        .game-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .puzzle-frame {
+            background: linear-gradient(145deg, #f8fafc, #e2e8f0);
+            box-shadow: inset 0 2px 4px 0 rgb(0 0 0 / 0.1),
+                        0 10px 10px -3px rgb(0 0 0 / 0.1);
+            border: 8px solid #1e2937;
+        }
+
+        .african-accent {
+            position: relative;
+        }
+        
+        .african-accent::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 60%;
+            height: 3px;
+            background: linear-gradient(to right, #111111, #111111);
+            border-radius: 9999px;
+        }
+
+        .metric {
+            font-variant-numeric: tabular-nums;
+        }
+    </style>
+</head>
+<body class="bg-[#f4f4f2] text-slate-900 african-pattern min-h-screen">
+    <!-- Top Navigation -->
+    <nav class="bg-white border-b border-slate-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+            <div class="flex items-center gap-x-4">
+                <div class="flex items-center gap-x-3">
+                    <div class="w-11 h-11 bg-black flex items-center justify-center">
+                        <span class="text-white text-2xl font-black leading-none" style="font-family:'Poppins',sans-serif;">W</span>
+                    </div>
+                    <div>
+                        <span class="font-bold text-2xl tracking-[0.18em] text-black" style="font-family:'Poppins',sans-serif;">WOOLWORTHS</span>
+                        <span class="block text-[9px] text-slate-500 font-semibold -mt-0.5 tracking-[3px]">SOUTH AFRICA</span>
+                    </div>
+                </div>
+                <div class="hidden md:block h-7 w-px bg-slate-200 mx-1"></div>
+                <div>
+                    <span class="px-4 py-1.5 text-sm font-bold bg-gradient-to-r from-[#111111] to-[#000000] text-white rounded-3xl text-center tracking-wider shadow">KYC CHALLENGE</span>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-x-3">
+                <!-- Music Toggle -->
+                <div onclick="toggleMusic()" class="flex items-center gap-x-2 px-4 py-2 bg-white hover:bg-slate-50 border border-slate-200 rounded-3xl cursor-pointer transition-colors shadow-sm" id="music-toggle">
+                    <i class="fa-solid fa-music text-black"></i>
+                    <span class="text-sm font-semibold text-slate-700 hidden sm:inline" id="music-text">Soundtrack</span>
+                    <div class="w-9 h-5 bg-slate-200 rounded-full relative" id="music-slider">
+                        <div class="absolute w-4 h-4 bg-white rounded-full shadow top-0.5 left-0.5 transition-all" id="music-knob"></div>
+                    </div>
+                </div>
+                
+                <div class="text-xs px-3 py-1 bg-slate-100 text-slate-600 rounded-3xl font-bold flex items-center gap-x-1.5" id="connection-status">
+                    <i class="fa-solid fa-wifi"></i>
+                    <span>LOCAL DEMO</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- START SCREEN -->
+    <div id="start-screen" class="max-w-5xl mx-auto px-6 pt-12 pb-20">
+        <div class="text-center mb-12">
+            <div class="inline-flex items-center gap-x-2 px-5 py-2 bg-white rounded-3xl shadow-sm border mb-6">
+                <div class="flex -space-x-1">
+                    <div class="w-6 h-6 bg-[#111111] rounded-full ring-2 ring-white"></div>
+                    <div class="w-6 h-6 bg-[#111111] rounded-full ring-2 ring-white"></div>
+                    <div class="w-6 h-6 bg-[#111111] rounded-full ring-2 ring-white"></div>
+                </div>
+                <span class="font-bold text-sm tracking-wider text-slate-600">MULTIPLAYER EXPERIENCE</span>
+            </div>
+            
+            <h1 class="text-7xl md:text-8xl font-black tracking-tighter heading-font mb-3">
+                <span class="bg-gradient-to-br from-[#111111] via-[#000000] to-[#111111] bg-clip-text text-transparent">KYC</span><br>
+                <span class="text-slate-900">CHALLENGE</span>
+            </h1>
+            <p class="text-2xl text-slate-600 max-w-md mx-auto">Know Your Customer • Woolworths SA Edition</p>
+            
+            <div class="flex justify-center gap-x-8 mt-8 text-sm">
+                <div class="flex items-center gap-x-2 text-slate-500">
+                    <i class="fa-solid fa-clock text-[#111111]"></i>
+                    <span class="font-medium">10 Questions • 10s each</span>
+                </div>
+                <div class="flex items-center gap-x-2 text-slate-500">
+                    <i class="fa-solid fa-users text-[#111111]"></i>
+                    <span class="font-medium">Real-time Leaderboard</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto">
+            <!-- Host Card -->
+            <div onclick="createGameAsHost()" 
+                 class="group bg-white border-2 border-[#111111] hover:border-[#000000] rounded-3xl p-8 cursor-pointer transition-all game-card modern-shadow">
+                <div class="flex items-start justify-between mb-6">
+                    <div class="w-14 h-14 bg-[#111111] group-hover:bg-[#000000] transition-colors rounded-2xl flex items-center justify-center">
+                        <i class="fa-solid fa-play text-white text-3xl ml-0.5"></i>
+                    </div>
+                    <span class="px-4 py-1 text-xs font-black tracking-widest bg-[#111111] text-white rounded-3xl flex items-center h-fit">HOST</span>
+                </div>
+                <h3 class="text-3xl font-black tracking-tight mb-2">Create New Game</h3>
+                <p class="text-slate-600 mb-8">Start a session, generate QR code &amp; lead the KYC quiz for your team.</p>
+                <div class="flex items-center text-[#111111] font-bold group-hover:gap-x-3 gap-x-2 transition-all">
+                    <span>START HOSTING</span> 
+                    <i class="fa-solid fa-arrow-right"></i>
+                </div>
+            </div>
+
+            <!-- Player Card (reversed mark) -->
+            <div onclick="showJoinScreen()" 
+                 class="group bg-black border-2 border-black rounded-3xl p-8 cursor-pointer transition-all game-card modern-shadow">
+                <div class="flex items-start justify-between mb-6">
+                    <div class="w-14 h-14 bg-white transition-colors rounded-2xl flex items-center justify-center">
+                        <i class="fa-solid fa-qrcode text-black text-3xl"></i>
+                    </div>
+                    <span class="px-4 py-1 text-xs font-black tracking-widest bg-white text-black rounded-3xl flex items-center h-fit">PLAYER</span>
+                </div>
+                <h3 class="text-3xl font-black tracking-tight mb-2 text-white">Join via Scanner</h3>
+                <p class="text-slate-300 mb-8">Scan the host's QR code or enter the room code to play on your device.</p>
+                <div class="flex items-center text-white font-bold group-hover:gap-x-3 gap-x-2 transition-all">
+                    <span>JOIN THE CHALLENGE</span> 
+                    <i class="fa-solid fa-arrow-right"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center mt-10">
+            <p class="text-xs text-slate-400">A gamified training &amp; team building experience for Woolworths SA staff • Built with ❤️ for quality customer service</p>
+        </div>
+    </div>
+
+    <!-- LOBBY SCREEN -->
+    <div id="lobby-screen" class="hidden max-w-5xl mx-auto px-6 pt-8 pb-16">
+        <div class="flex items-center justify-between mb-8">
+            <div>
+                <span class="text-sm font-bold tracking-[3px] text-[#111111]">SESSION ACTIVE</span>
+                <h2 class="text-4xl font-black tracking-tighter">Game Lobby</h2>
+            </div>
+            <div class="text-right">
+                <div class="text-xs text-slate-500">ROOM CODE</div>
+                <div onclick="copyRoomCode()" class="font-mono text-4xl font-black tracking-[4px] text-[#111111] cursor-pointer flex items-center justify-end gap-x-2 hover:text-[#000000]" id="room-code-display">
+                    <!-- JS populated -->
+                </div>
+            </div>
+        </div>
+
+        <div class="grid lg:grid-cols-12 gap-8">
+            <!-- QR + Info -->
+            <div class="lg:col-span-5 bg-white rounded-3xl border p-8 modern-shadow">
+                <div class="text-center">
+                    <p class="uppercase text-xs tracking-[2px] font-bold text-slate-500 mb-3">PLAYERS SCAN TO JOIN</p>
+                    <div id="qrcode-container" class="mx-auto w-fit p-4 bg-white border-2 border-slate-100 rounded-2xl shadow-inner"></div>
+                    <p class="mt-4 text-sm text-slate-500">Or share the room code above</p>
+                </div>
+                
+                <div class="mt-8 pt-6 border-t">
+                    <div class="flex items-center justify-between text-sm">
+                        <div class="flex items-center gap-x-2 text-emerald-600">
+                            <i class="fa-solid fa-users"></i>
+                            <span class="font-semibold" id="player-count">0 / 20 players joined</span>
+                        </div>
+                        <div onclick="simulateAddPlayer()" class="text-xs px-3 py-1 bg-emerald-100 hover:bg-emerald-200 text-emerald-700 rounded-2xl font-bold cursor-pointer flex items-center gap-x-1">
+                            <i class="fa-solid fa-plus"></i>
+                            <span class="hidden sm:inline">Add test player</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Players List -->
+            <div class="lg:col-span-7 bg-white rounded-3xl border p-8 modern-shadow">
+                <div class="flex items-center justify-between mb-5">
+                    <h4 class="font-bold flex items-center gap-x-2"><i class="fa-solid fa-user-friends text-[#111111]"></i> <span>PLAYERS IN LOBBY</span></h4>
+                    <span class="text-xs px-3 py-1 bg-slate-100 rounded-3xl font-mono" id="lobby-status">WAITING FOR HOST</span>
+                </div>
+                
+                <div id="players-list" class="space-y-3 min-h-[220px] max-h-[320px] overflow-auto pr-2 custom-scroll">
+                    <!-- Populated by JS -->
+                </div>
+                
+                <div class="pt-6 mt-6 border-t flex gap-x-3" id="host-controls">
+                    <button onclick="startGame()" 
+                            class="flex-1 py-4 bg-[#111111] hover:bg-[#000000] active:bg-[#000000] transition-colors text-white font-black text-lg tracking-wider rounded-3xl shadow-lg flex items-center justify-center gap-x-3">
+                        <i class="fa-solid fa-play"></i>
+                        <span>START THE GAME</span>
+                    </button>
+                    <button onclick="endGameEarly()" 
+                            class="px-6 py-4 border border-slate-300 hover:bg-slate-50 text-slate-600 font-bold rounded-3xl transition-colors">
+                        <i class="fa-solid fa-times"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- GAME SCREEN -->
+    <div id="game-screen" class="hidden max-w-7xl mx-auto px-5 pt-6 pb-10">
+        <div class="flex items-center justify-between mb-5 px-1">
+            <div class="flex items-center gap-x-4">
+                <div>
+                    <span class="font-mono text-xs px-3 py-1 bg-white border rounded-3xl font-bold" id="question-counter">Q 1 / 10</span>
+                </div>
+                <div class="font-bold text-xl" id="host-indicator"></div>
+            </div>
+            
+            <div class="flex items-center gap-x-4">
+                <div class="flex items-center bg-white border rounded-3xl px-2 py-1 shadow-sm">
+                    <div class="px-4 flex items-center gap-x-2 text-sm">
+                        <i class="fa-solid fa-tachometer-alt text-[#111111]"></i>
+                        <span class="font-bold">LIVE</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            
+            <!-- QUESTION + OPTIONS -->
+            <div class="lg:col-span-7 bg-white rounded-3xl border modern-shadow overflow-hidden">
+                <div class="px-8 pt-8 pb-6">
+                    <!-- Timer -->
+                    <div class="flex justify-between items-center mb-4">
+                        <div>
+                            <span class="text-xs font-black tracking-widest text-slate-500">TIME TO ANSWER</span>
+                        </div>
+                        <div class="flex items-baseline gap-x-1.5">
+                            <div id="timer-text" class="font-mono text-6xl font-black tabular-nums text-[#111111]">10</div>
+                            <div class="text-sm text-slate-400 font-bold">SEC</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Progress bar timer -->
+                    <div class="h-2.5 bg-slate-100 rounded-full overflow-hidden mb-8">
+                        <div id="timer-bar" class="h-full bg-gradient-to-r from-[#111111] via-[#111111] to-[#111111] transition-all duration-100" 
+                             style="width: 100%"></div>
+                    </div>
+
+                    <!-- Question -->
+                    <div id="question-text" class="text-3xl font-black tracking-tight leading-tight mb-8 min-h-[92px]">
+                        <!-- JS injected -->
+                    </div>
+
+                    <!-- Options -->
+                    <div id="options-container" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+                
+                <!-- Post-answer status -->
+                <div id="answer-status" class="hidden px-8 py-5 bg-slate-50 border-t text-sm">
+                    <div class="flex items-center gap-x-3">
+                        <div id="status-icon" class="w-9 h-9 flex-shrink-0 rounded-2xl flex items-center justify-center"></div>
+                        <div class="flex-1">
+                            <div id="status-text" class="font-bold"></div>
+                            <div id="status-subtext" class="text-xs text-slate-500"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT COLUMN: PUZZLE + LEADERBOARD -->
+            <div class="lg:col-span-5 space-y-6">
+                
+                <!-- 3D PICTORIAL PUZZLE -->
+                <div class="bg-white rounded-3xl border modern-shadow p-6">
+                    <div class="flex items-center justify-between mb-4 px-1">
+                        <div>
+                            <span class="font-black text-lg flex items-center gap-x-2">
+                                <i class="fa-solid fa-puzzle-piece text-[#111111]"></i> 
+                                <span>WOOLWORTHS LEGACY</span>
+                            </span>
+                            <span class="text-xs text-slate-500 font-medium">3D Pictorial Puzzle • 10 pieces</span>
+                        </div>
+                        <div class="text-right">
+                            <span id="puzzle-progress" class="font-mono text-xl font-black text-[#111111]">0/10</span>
+                        </div>
+                    </div>
+                    
+                    <!-- The 3D Puzzle Container -->
+                    <div id="puzzle-container" 
+                         class="puzzle-frame relative mx-auto rounded-2xl overflow-hidden border border-slate-300"
+                         style="width: 100%; max-width: 340px; height: 210px; perspective: 720px; perspective-origin: 50% 38%;">
+                        
+                        <div id="puzzle-pieces" class="puzzle-stage absolute inset-0">
+                            <!-- Puzzle pieces injected by JS -->
+                        </div>
+                        
+                        <!-- Final Logo Overlay (appears when complete) -->
+                        <div id="final-logo-overlay" class="absolute inset-0 hidden flex items-center justify-center bg-white rounded-2xl">
+                            <div class="text-center px-6">
+                                <div class="flex justify-center mb-2">
+                                    <div class="w-14 h-14 bg-black flex items-center justify-center">
+                                        <span class="text-white text-4xl font-black leading-none" style="font-family:'Poppins',sans-serif;">W</span>
+                                    </div>
+                                </div>
+                                <div class="wool-mark text-2xl text-black leading-none">WOOLWORTHS</div>
+                                <div class="text-[9px] font-semibold text-slate-500 tracking-[3px] mt-1.5">THE DIFFERENCE • SINCE 1931</div>
+                                <div class="mt-2 text-[10px] text-black font-bold flex justify-center items-center gap-x-1">
+                                    <i class="fa-solid fa-check-double"></i> 
+                                    <span>PUZZLE COMPLETE</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center mt-3">
+                        <span class="text-[10px] uppercase tracking-widest font-bold text-slate-400">Assembles into the iconic Woolworths emblem</span>
+                    </div>
+                </div>
+
+                <!-- LIVE LEADERBOARD -->
+                <div class="bg-white rounded-3xl border modern-shadow p-6 flex-1">
+                    <div class="flex items-center justify-between mb-4 px-1">
+                        <span class="font-black flex items-center gap-x-2"><i class="fa-solid fa-trophy text-black"></i> LIVE LEADERBOARD</span>
+                        <span class="text-xs font-mono bg-slate-900 text-white px-3 rounded-2xl py-px">REAL-TIME</span>
+                    </div>
+                    
+                    <div id="leaderboard-list" class="space-y-[5px] text-sm max-h-[218px] overflow-auto pr-1 custom-scroll">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Host Controls -->
+        <div id="host-game-controls" class="hidden mt-6 bg-white border rounded-3xl p-4 flex items-center justify-between">
+            <div class="flex items-center gap-x-3 text-sm">
+                <span class="font-bold px-4">HOST CONTROLS</span>
+                <span id="host-status-text" class="text-emerald-600 font-medium text-xs px-3 py-1 bg-emerald-50 rounded-3xl">WAITING FOR ANSWERS...</span>
+            </div>
+            <div class="flex gap-x-3">
+                <button onclick="revealCurrentQuestion()" 
+                        class="px-6 py-3 text-sm font-bold bg-amber-500 hover:bg-amber-600 transition text-white rounded-3xl flex items-center gap-x-2">
+                    <i class="fa-solid fa-eye"></i>
+                    <span>REVEAL ANSWERS &amp; FACT</span>
+                </button>
+                <button onclick="nextQuestion()" 
+                        class="px-8 py-3 text-sm font-black bg-[#111111] hover:bg-[#000000] transition text-white rounded-3xl flex items-center gap-x-2">
+                    <span>NEXT QUESTION</span>
+                    <i class="fa-solid fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Fun Fact Banner -->
+        <div id="fun-fact-banner" class="hidden mt-6 mx-auto max-w-3xl fun-fact-banner bg-white border border-slate-200 rounded-3xl p-6">
+            <div class="flex gap-x-4">
+                <div class="flex-shrink-0 w-10 h-10 bg-black text-white rounded-2xl flex items-center justify-center">
+                    <i class="fa-solid fa-lightbulb text-xl"></i>
+                </div>
+                <div class="flex-1 pt-0.5">
+                    <div class="uppercase text-slate-500 text-xs font-black tracking-[1.5px]">DID YOU KNOW?</div>
+                    <div id="fun-fact-text" class="text-slate-700 leading-snug mt-1 text-[15px]"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- END / RESULTS SCREEN -->
+    <div id="end-screen" class="hidden max-w-5xl mx-auto px-6 pt-10 pb-16">
+        <div class="text-center mb-8">
+            <div class="inline px-6 py-1.5 text-xs font-black tracking-[3px] bg-emerald-600 text-white rounded-3xl">GAME COMPLETE</div>
+            <h2 class="mt-3 text-6xl font-black tracking-tighter">The Woolworths Puzzle is Complete!</h2>
+            <p class="text-xl text-slate-600 mt-1">Thank you for playing. Quality service starts with knowing your customer.</p>
+        </div>
+
+        <!-- Completed Puzzle Hero -->
+        <div class="mx-auto max-w-md mb-10">
+            <div class="puzzle-frame relative mx-auto rounded-3xl overflow-hidden border-8 border-slate-800 shadow-2xl" style="width: 100%; height: 210px;">
+                <div class="absolute inset-0 flex items-center justify-center bg-white">
+                    <div class="text-center">
+                        <div class="flex justify-center mb-3">
+                            <div class="w-20 h-20 bg-black flex items-center justify-center">
+                                <span class="text-white text-6xl font-black leading-none" style="font-family:'Poppins',sans-serif;">W</span>
+                            </div>
+                        </div>
+                        <div>
+                            <span class="wool-mark text-4xl text-black">WOOLWORTHS</span>
+                        </div>
+                        <div class="text-slate-500 text-[11px] font-semibold tracking-[5px] mt-2">SOUTH AFRICA • SINCE 1931</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top 3 Podium -->
+        <div class="mb-10">
+            <h3 class="font-bold text-center mb-5 text-xl tracking-tight">🏆 TOP 3 CUSTOMER CHAMPIONS</h3>
+            
+            <div class="flex justify-center items-end gap-x-4 max-w-2xl mx-auto" id="podium-container">
+                <!-- Populated by JS: 2nd, 1st, 3rd -->
+            </div>
+        </div>
+
+        <!-- Full Leaderboard -->
+        <div class="max-w-2xl mx-auto bg-white rounded-3xl border p-1 modern-shadow">
+            <div class="px-6 pt-5 pb-3">
+                <span class="font-bold px-1">FINAL STANDINGS</span>
+            </div>
+            <div id="final-leaderboard" class="px-2 pb-4 max-h-[210px] overflow-auto">
+                <!-- JS populated rows -->
+            </div>
+        </div>
+
+        <div class="flex justify-center gap-x-4 mt-10">
+            <button onclick="restartGame()" 
+                    class="px-10 py-4 bg-white border font-bold rounded-3xl flex items-center gap-x-3 hover:bg-slate-50 transition">
+                <i class="fa-solid fa-redo"></i>
+                <span>PLAY AGAIN</span>
+            </button>
+            <button onclick="downloadResults()" 
+                    class="px-8 py-4 bg-[#111111] text-white font-bold rounded-3xl flex items-center gap-x-3 hover:bg-[#000000] transition">
+                <i class="fa-solid fa-download"></i>
+                <span>DOWNLOAD RESULTS</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Join Modal -->
+    <div id="join-modal" onclick="if (event.target.id === 'join-modal') hideJoinModal()" class="hidden fixed inset-0 bg-black/60 flex items-center justify-center z-[100]">
+        <div onclick="event.stopImmediatePropagation()" class="bg-white w-full max-w-md mx-4 rounded-3xl p-8 modern-shadow max-h-[92vh] overflow-y-auto custom-scroll">
+            <h3 class="font-black text-3xl mb-1">Join the Challenge</h3>
+            <p class="text-slate-500 mb-6">Scan the host's QR code, or enter the room code.</p>
+
+            <!-- Live camera scanner -->
+            <div class="mb-6">
+                <div class="flex items-center justify-between mb-2">
+                    <label class="text-xs font-bold tracking-widest text-slate-500">SCAN QR CODE</label>
+                    <span id="scanner-status" class="text-[11px] font-semibold text-slate-400">Camera off</span>
+                </div>
+                <div id="qr-reader" class="w-full rounded-2xl overflow-hidden border-2 border-slate-200 bg-slate-900 hidden"></div>
+                <div id="scanner-error" class="hidden mt-2 text-xs text-red-600 leading-snug"></div>
+                <div class="flex gap-x-3 mt-3">
+                    <button id="scan-start-btn" onclick="startQrScanner()" class="flex-1 py-3 bg-black hover:bg-slate-800 text-white font-bold rounded-2xl flex items-center justify-center gap-x-2 transition-colors">
+                        <i class="fa-solid fa-camera"></i> <span>Open camera</span>
+                    </button>
+                    <button id="scan-stop-btn" onclick="stopQrScanner()" class="hidden flex-1 py-3 border-2 border-slate-200 hover:bg-slate-50 text-slate-700 font-bold rounded-2xl flex items-center justify-center gap-x-2 transition-colors">
+                        <i class="fa-solid fa-stop"></i> <span>Stop</span>
+                    </button>
+                </div>
+                <p class="text-[11px] text-slate-400 mt-2 leading-snug">Camera scanning needs a secure page (https or localhost) and permission to use the camera.</p>
+            </div>
+
+            <div class="flex items-center gap-x-3 mb-5">
+                <div class="flex-1 h-px bg-slate-200"></div>
+                <span class="text-[11px] font-bold tracking-widest text-slate-400">OR ENTER MANUALLY</span>
+                <div class="flex-1 h-px bg-slate-200"></div>
+            </div>
+
+            <div class="space-y-5">
+                <div>
+                    <label class="text-xs font-bold tracking-widest text-slate-500 block mb-1.5">ROOM CODE</label>
+                    <input id="join-code-input" type="text" maxlength="9" placeholder="e.g. WOOL1234" 
+                           class="w-full px-5 py-4 text-3xl font-mono tracking-[4px] border-2 border-slate-200 focus:border-black rounded-3xl outline-none text-center uppercase">
+                </div>
+                
+                <div>
+                    <label class="text-xs font-bold tracking-widest text-slate-500 block mb-1.5">YOUR NAME</label>
+                    <input id="join-name-input" type="text" placeholder="Thandi Mokoena" value="Player"
+                           class="w-full px-5 py-4 border-2 border-slate-200 focus:border-black rounded-3xl outline-none text-xl">
+                </div>
+            </div>
+            
+            <div class="flex gap-x-3 mt-8">
+                <button onclick="hideJoinModal()" class="flex-1 py-4 border font-bold rounded-3xl">CANCEL</button>
+                <button onclick="joinGame()" class="flex-1 py-4 bg-black text-white font-black rounded-3xl">JOIN GAME</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==================== GAME DATA ====================
+        const questions = [
+            {
+                id: 1,
+                q: "What does KYC stand for in the context of customer service and compliance?",
+                options: ["Keep Your Customers Happy", "Know Your Customer", "Key Yield Compliance", "Kindly Verify Every Client"],
+                correct: 1,
+                funFact: "The 'Know Your Customer' principle has been a cornerstone of responsible banking and retail since the 1970s. In South Africa it is reinforced by FICA to protect our economy from financial crime."
+            },
+            {
+                id: 2,
+                q: "Which South African Act is central to Anti-Money Laundering (AML) and KYC compliance for financial services?",
+                options: ["POPIA", "FICA", "Consumer Protection Act", "National Credit Act"],
+                correct: 1,
+                funFact: "FICA (Financial Intelligence Centre Act) requires Woolworths Financial Services and other institutions to verify customer identities and report suspicious activities — protecting all South Africans."
+            },
+            {
+                id: 3,
+                q: "What is the primary purpose of KYC for a premium retailer like Woolworths SA?",
+                options: ["To increase marketing emails", "To verify identity, manage risk and build trusted, long-term customer relationships", "To slow down the checkout process", "To share data with third parties"],
+                correct: 1,
+                funFact: "Woolworths serves hundreds of thousands of loyal MySchool and WRewards customers. Proper KYC allows personalized service while keeping your personal information safe under POPIA."
+            },
+            {
+                id: 4,
+                q: "What does CDD stand for in professional KYC processes?",
+                options: ["Customer Data Deletion", "Customer Due Diligence", "Credit Default Detection", "Corporate Delivery Document"],
+                correct: 1,
+                funFact: "Customer Due Diligence means truly understanding who your customer is, why they shop with you, and monitoring the relationship — exactly how Woolworths team members build lasting connections every day."
+            },
+            {
+                id: 5,
+                q: "Which document is typically required for strong individual KYC verification in South Africa?",
+                options: ["Only a selfie", "Valid SA ID (Smart ID or green bar-coded) + recent proof of residential address", "School report card", "Facebook profile printout"],
+                correct: 1,
+                funFact: "The Smart ID card is one of the most secure identity documents in the world. Always match the photo and details carefully — it protects both the customer and Woolworths."
+            },
+            {
+                id: 6,
+                q: "When is Enhanced Due Diligence (EDD) required during KYC?",
+                options: ["For every new loyalty sign-up", "For high-risk situations such as politically exposed persons (PEPs) or unusual large transactions", "Only for customers older than 65", "When the WiFi is slow"],
+                correct: 1,
+                funFact: "EDD is extra care for higher-risk customers. Woolworths applies a risk-based approach so genuine customers enjoy fast, friendly service while suspicious activity is flagged responsibly."
+            },
+            {
+                id: 7,
+                q: "How does modern technology (AI & biometrics) improve KYC at forward-thinking retailers?",
+                options: ["It completely removes the need for staff", "It speeds up verification, detects fraud patterns, and frees staff to focus on warm, human customer experiences", "It only sends promotional SMS", "It has no practical use in retail"],
+                correct: 1,
+                funFact: "AI can verify documents in seconds with incredible accuracy. At Woolworths, technology supports our people so they can focus on what matters most — delightful in-store moments."
+            },
+            {
+                id: 8,
+                q: "Which behaviour is a common red flag that may require further KYC attention?",
+                options: ["Paying with a Woolworths gift card", "Providing inconsistent personal details or appearing reluctant to answer simple verification questions", "Buying their weekly groceries", "Using the express checkout lane"],
+                correct: 1,
+                funFact: "Staff intuition + process = powerful protection. Woolworths trains teams to stay friendly and observant — because great service and vigilance go hand in hand."
+            },
+            {
+                id: 9,
+                q: "Which key South African law protects customer personal information collected during KYC?",
+                options: ["Only international GDPR", "POPIA — Protection of Personal Information Act", "The Basic Conditions of Employment Act", "No specific law applies to retail"],
+                correct: 1,
+                funFact: "POPIA gives every South African the right to know how their data is used and to request corrections. Woolworths takes this responsibility seriously — your trust is our most valuable asset."
+            },
+            {
+                id: 10,
+                q: "What is the ultimate goal of an excellent KYC programme at Woolworths SA?",
+                options: ["To create extra paperwork", "To protect customers and the business from crime while enabling warm, personalised, and trusted shopping experiences", "To sell customer data", "To meet the bare legal minimum"],
+                correct: 1,
+                funFact: "When done with heart and excellence, KYC is not a barrier — it is the very foundation of lifelong customer relationships. That is the true Woolworths way since 1931."
+            }
+        ];
+
+        // ==================== OPTION SHUFFLE (deterministic per room) ====================
+        // Fixes "correct answer is always B": options are reordered, and because the
+        // shuffle is seeded by the room code, every device in the same room agrees on order.
+        function seedFromString(str) {
+            let h = 1779033703 ^ str.length;
+            for (let i = 0; i < str.length; i++) {
+                h = Math.imul(h ^ str.charCodeAt(i), 3432918353);
+                h = (h << 13) | (h >>> 19);
+            }
+            return h >>> 0;
+        }
+
+        function mulberry32(seed) {
+            return function () {
+                seed |= 0; seed = (seed + 0x6D2B79F5) | 0;
+                let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+                t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+                return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+            };
+        }
+
+        function buildActiveQuestions(roomCode) {
+            const rand = mulberry32(seedFromString('kyc-' + (roomCode || 'default')));
+            return questions.map((q, qi) => {
+                // Pair each option with a flag for whether it's the correct one.
+                const paired = q.options.map((text, idx) => ({ text, isCorrect: idx === q.correct }));
+                // Fisher–Yates using the seeded PRNG (offset per question for variety).
+                for (let i = paired.length - 1; i > 0; i--) {
+                    const j = Math.floor(rand() * (i + 1 + qi * 0)) % (i + 1);
+                    [paired[i], paired[j]] = [paired[j], paired[i]];
+                }
+                return {
+                    id: q.id,
+                    q: q.q,
+                    options: paired.map(p => p.text),
+                    correct: paired.findIndex(p => p.isCorrect),
+                    funFact: q.funFact
+                };
+            });
+        }
+
+        // Active (shuffled) question set for the current room; falls back to originals.
+        let activeQuestions = questions;
+
+        // ==================== STATE ====================
+        let currentRoom = null;
+        let isHost = false;
+        let players = []; // {id, name, score, avatarSeed, answers: {} }
+        let currentQuestionIndex = 0;
+        let gameState = 'lobby'; // lobby, playing, ended
+        let timerInterval = null;
+        let timeLeft = 10;
+        let playerAnswers = {}; // for current question
+        let audioContext = null;
+        let musicPlaying = false;
+        let musicInterval = null;
+        let puzzlePieces = [];
+        let myPlayerId = null;
+        let broadcastChannel = null;
+
+        // ===== Networking: BroadcastChannel (same device) + PeerJS (cross device) =====
+        let hostPeer = null;        // host's Peer
+        let hostConnections = [];   // host: list of DataConnections to players
+        let playerPeer = null;      // player's Peer
+        let hostConn = null;        // player: DataConnection to host
+        let netReady = false;
+
+        function peerIdForRoom(code) {
+            // Namespaced, lowercase, valid PeerJS id derived from the room code.
+            return 'kycwoolsa-' + String(code || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+        }
+
+        function setConnStatus(text, tone) {
+            const el = document.getElementById('connection-status');
+            if (!el) return;
+            const tones = {
+                live:  'bg-black text-white',
+                wait:  'bg-slate-100 text-slate-600',
+                warn:  'bg-red-100 text-red-700'
+            };
+            el.className = 'text-xs px-3 py-1 rounded-3xl font-bold flex items-center gap-x-1.5 ' + (tones[tone] || tones.wait);
+            el.innerHTML = '<i class="fa-solid fa-wifi"></i><span>' + text + '</span>';
+        }
+
+        // BroadcastChannel for same-browser multi-tab play
+        function initBroadcast() {
+            if ('BroadcastChannel' in window) {
+                broadcastChannel = new BroadcastChannel('kyc_woolworths_game');
+                broadcastChannel.onmessage = (event) => handleGameMessage(event.data);
+            }
+        }
+
+        // ---- Host: start a peer whose id is the room, accept player connections ----
+        function startHostPeer(code) {
+            if (typeof Peer === 'undefined') {
+                setConnStatus('LOCAL ONLY', 'warn');
+                return;
+            }
+            try {
+                hostPeer = new Peer(peerIdForRoom(code), { debug: 1 });
+                setConnStatus('CONNECTING…', 'wait');
+
+                hostPeer.on('open', () => {
+                    netReady = true;
+                    setConnStatus('LIVE • HOSTING', 'live');
+                });
+
+                hostPeer.on('connection', (conn) => {
+                    hostConnections.push(conn);
+                    conn.on('open', () => {
+                        // Tell the newcomer the current game state right away.
+                        conn.send({ room: currentRoom, type: 'host-welcome',
+                            payload: { players: players, gameState: gameState, questionIndex: currentQuestionIndex } });
+                    });
+                    conn.on('data', (msg) => handleGameMessage(msg));
+                    conn.on('close', () => {
+                        hostConnections = hostConnections.filter(c => c !== conn);
+                    });
+                });
+
+                hostPeer.on('error', (err) => {
+                    console.warn('Host peer error:', err && err.type);
+                    if (err && err.type === 'unavailable-id') {
+                        setConnStatus('ROOM IN USE', 'warn');
+                    } else {
+                        setConnStatus('LOCAL ONLY', 'warn');
+                    }
+                });
+            } catch (e) {
+                setConnStatus('LOCAL ONLY', 'warn');
+            }
+        }
+
+        // ---- Player: connect to the host peer for this room ----
+        function startPlayerPeer(code, onConnected) {
+            if (typeof Peer === 'undefined') { onConnected && onConnected(false); return; }
+            try {
+                playerPeer = new Peer({ debug: 1 });
+                setConnStatus('CONNECTING…', 'wait');
+
+                playerPeer.on('open', () => {
+                    hostConn = playerPeer.connect(peerIdForRoom(code), { reliable: true });
+
+                    const failTimer = setTimeout(() => {
+                        if (!netReady) { setConnStatus('HOST NOT FOUND', 'warn'); onConnected && onConnected(false); }
+                    }, 9000);
+
+                    hostConn.on('open', () => {
+                        netReady = true;
+                        clearTimeout(failTimer);
+                        setConnStatus('LIVE • JOINED', 'live');
+                        onConnected && onConnected(true);
+                    });
+                    hostConn.on('data', (msg) => handleGameMessage(msg));
+                    hostConn.on('close', () => setConnStatus('DISCONNECTED', 'warn'));
+                });
+
+                playerPeer.on('error', (err) => {
+                    console.warn('Player peer error:', err && err.type);
+                    if (err && err.type === 'peer-unavailable') {
+                        setConnStatus('HOST NOT FOUND', 'warn');
+                        onConnected && onConnected(false);
+                    } else {
+                        setConnStatus('CONNECTION ERROR', 'warn');
+                    }
+                });
+            } catch (e) {
+                onConnected && onConnected(false);
+            }
+        }
+
+        // Send a message across every available transport.
+        function broadcast(type, payload) {
+            if (!currentRoom) return;
+            const msg = { room: currentRoom, type, payload, sender: myPlayerId || 'host' };
+            if (broadcastChannel) { try { broadcastChannel.postMessage(msg); } catch (e) {} }
+            if (isHost) {
+                hostConnections.forEach(c => { try { if (c.open) c.send(msg); } catch (e) {} });
+            } else if (hostConn && hostConn.open) {
+                try { hostConn.send(msg); } catch (e) {}
+            }
+        }
+
+        function handleGameMessage(msg) {
+            if (!msg || msg.room !== currentRoom) return;
+
+            switch (msg.type) {
+                case 'player-joined':
+                    if (isHost) {
+                        addPlayerToLobby(msg.payload);
+                        // Re-share the updated roster so every player sees the lobby.
+                        broadcast('roster-update', { players: players });
+                    }
+                    break;
+                case 'host-welcome':
+                    if (!isHost) {
+                        players = msg.payload.players || players;
+                        renderPlayersList();
+                        const status = document.getElementById('lobby-status');
+                        if (status) status.innerHTML = 'JOINED • WAITING FOR HOST';
+                    }
+                    break;
+                case 'roster-update':
+                    if (!isHost) {
+                        players = msg.payload.players || players;
+                        renderPlayersList();
+                        updatePlayerCount();
+                    }
+                    break;
+                case 'answer-submitted':
+                    if (isHost) {
+                        recordPlayerAnswer(msg.payload.playerId, msg.payload.choice, msg.payload.timeLeft);
+                    }
+                    break;
+                case 'game-started':
+                    startGameForAll();
+                    break;
+                case 'question-revealed':
+                    revealQuestionForAll(msg.payload);
+                    break;
+                case 'next-question':
+                    goToNextQuestion(msg.payload);
+                    break;
+                case 'leaderboard-update':
+                    updateLeaderboardFromBroadcast(msg.payload);
+                    break;
+                case 'game-ended':
+                    endGameForAll(msg.payload);
+                    break;
+            }
+        }
+
+        // ==================== TAILWIND CONFIG ====================
+        function initTailwind() {
+            document.documentElement.style.setProperty('--accent', '#111111');
+            
+            tailwind.config = {
+                theme: {
+                    extend: {
+                        fontFamily: {
+                            'heading': ['Poppins', 'system-ui', 'sans-serif']
+                        }
+                    }
+                }
+            };
+        }
+
+        // ==================== MUSIC (Peppy African Beat) ====================
+        function initAudio() {
+            try {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            } catch (e) {
+                console.log('Web Audio API not supported');
+            }
+        }
+
+        function toggleMusic() {
+            const toggle = document.getElementById('music-toggle');
+            const knob = document.getElementById('music-knob');
+            const text = document.getElementById('music-text');
+            
+            musicPlaying = !musicPlaying;
+            
+            if (musicPlaying) {
+                knob.style.left = '18px';
+                toggle.classList.add('!bg-black', '!border-black');
+                text.classList.add('!text-white');
+                document.querySelector('#music-toggle i')?.classList.add('!text-white');
+                text.textContent = 'Playing...';
+                startAfricanBeat();
+            } else {
+                knob.style.left = '2px';
+                toggle.classList.remove('!bg-black', '!border-black');
+                text.classList.remove('!text-white');
+                document.querySelector('#music-toggle i')?.classList.remove('!text-white');
+                text.textContent = 'Soundtrack';
+                stopAfricanBeat();
+            }
+        }
+
+        function startAfricanBeat() {
+            if (!audioContext) initAudio();
+            if (!audioContext) return;
+            
+            stopAfricanBeat();
+            
+            const bpm = 128;
+            const beatInterval = (60 / bpm) * 1000 / 2; // 8th notes feel
+            
+            let step = 0;
+            
+            musicInterval = setInterval(() => {
+                if (!musicPlaying || !audioContext) return;
+                
+                const time = audioContext.currentTime;
+                
+                // Kick drum (low)
+                if (step % 4 === 0) {
+                    playDrum(60, 0.6, 'sine', 0.8);
+                }
+                
+                // Snare / clap feel
+                if (step % 4 === 2) {
+                    playDrum(180, 0.35, 'triangle', 0.5);
+                    playNoise(0.25, 800);
+                }
+                
+                // Shaker / hi-hat (peppery African feel)
+                if (step % 2 === 0) {
+                    playShaker(0.18);
+                } else {
+                    playShaker(0.09);
+                }
+                
+                // Occasional melodic kalimba-like tone
+                if (step % 8 === 1 || step % 8 === 5) {
+                    playKalimba(680 + (step % 3) * 120, 0.7);
+                }
+                
+                step = (step + 1) % 16;
+            }, beatInterval);
+        }
+        
+        function playDrum(freq, duration, type = 'sine', volume = 0.7) {
+            if (!audioContext) return;
+            const osc = audioContext.createOscillator();
+            const gain = audioContext.createGain();
+            const filter = audioContext.createBiquadFilter();
+            
+            osc.type = type;
+            osc.frequency.value = freq;
+            
+            filter.type = 'lowpass';
+            filter.frequency.value = 800;
+            
+            gain.gain.value = volume;
+            
+            const now = audioContext.currentTime;
+            gain.gain.setValueAtTime(volume, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+            
+            osc.connect(filter);
+            filter.connect(gain);
+            gain.connect(audioContext.destination);
+            
+            osc.start(now);
+            osc.stop(now + duration + 0.1);
+        }
+        
+        function playShaker(duration) {
+            if (!audioContext) return;
+            const bufferSize = audioContext.sampleRate * duration;
+            const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
+            const data = buffer.getChannelData(0);
+            
+            for (let i = 0; i < bufferSize; i++) {
+                data[i] = Math.random() * 2 - 1;
+            }
+            
+            const noise = audioContext.createBufferSource();
+            noise.buffer = buffer;
+            
+            const filter = audioContext.createBiquadFilter();
+            filter.type = 'bandpass';
+            filter.frequency.value = 4500;
+            filter.Q.value = 1.8;
+            
+            const gain = audioContext.createGain();
+            gain.gain.value = 0.18;
+            
+            const now = audioContext.currentTime;
+            gain.gain.setValueAtTime(0.18, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+            
+            noise.connect(filter);
+            filter.connect(gain);
+            gain.connect(audioContext.destination);
+            noise.start(now);
+        }
+        
+        function playNoise(duration, cutoff = 1200) {
+            if (!audioContext) return;
+            const bufferSize = audioContext.sampleRate * duration;
+            const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
+            const data = buffer.getChannelData(0);
+            for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+            
+            const noise = audioContext.createBufferSource();
+            noise.buffer = buffer;
+            
+            const filter = audioContext.createBiquadFilter();
+            filter.type = 'lowpass';
+            filter.frequency.value = cutoff;
+            
+            const gain = audioContext.createGain();
+            gain.gain.value = 0.35;
+            
+            const now = audioContext.currentTime;
+            gain.gain.setValueAtTime(0.35, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + duration * 0.8);
+            
+            noise.connect(filter);
+            filter.connect(gain);
+            gain.connect(audioContext.destination);
+            noise.start(now);
+        }
+        
+        function playKalimba(freq, duration) {
+            if (!audioContext) return;
+            const osc = audioContext.createOscillator();
+            const gain = audioContext.createGain();
+            const filter = audioContext.createBiquadFilter();
+            
+            osc.type = 'sine';
+            osc.frequency.value = freq;
+            
+            filter.type = 'lowpass';
+            filter.frequency.value = 2400;
+            
+            gain.gain.value = 0.22;
+            
+            const now = audioContext.currentTime;
+            gain.gain.setValueAtTime(0.22, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+            
+            osc.connect(filter);
+            filter.connect(gain);
+            gain.connect(audioContext.destination);
+            
+            osc.start(now);
+            osc.stop(now + duration + 0.2);
+        }
+
+        function stopAfricanBeat() {
+            if (musicInterval) {
+                clearInterval(musicInterval);
+                musicInterval = null;
+            }
+        }
+
+        // ==================== 3D PICTORIAL PUZZLE ====================
+        // The 10 pieces slice-and-reassemble into the actual Woolworths mark.
+        const PUZZLE_COLS = 5;
+        const PUZZLE_ROWS = 2;
+
+        // Authentic monochrome Woolworths emblem, drawn as an SVG picture.
+        function woolworthsLogoSVG(w, h) {
+            const sq = Math.round(h * 0.6);
+            const sx = Math.round(w * 0.05);
+            const sy = Math.round((h - sq) / 2);
+            const textX = sx + sq + Math.round(w * 0.05);
+            const wordSize = Math.round(h * 0.27);
+            const subSize = Math.round(h * 0.12);
+            const wSize = Math.round(sq * 0.72);
+            const svg = `
+<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">
+  <rect width="${w}" height="${h}" fill="#000000"/>
+  <rect x="${sx}" y="${sy}" width="${sq}" height="${sq}" fill="#ffffff"/>
+  <text x="${sx + sq/2}" y="${sy + sq*0.72}" text-anchor="middle" font-family="Poppins, Arial, sans-serif" font-weight="800" font-size="${wSize}" fill="#000000">W</text>
+  <text x="${textX}" y="${h*0.5}" text-anchor="start" font-family="Poppins, Arial, sans-serif" font-weight="700" letter-spacing="${Math.round(w*0.006)}" font-size="${wordSize}" fill="#ffffff">WOOLWORTHS</text>
+  <text x="${textX + 2}" y="${h*0.72}" text-anchor="start" font-family="Arial, sans-serif" font-weight="600" letter-spacing="${Math.round(w*0.01)}" font-size="${subSize}" fill="#bdbdbd">SOUTH AFRICA</text>
+</svg>`.trim();
+            return 'url("data:image/svg+xml;utf8,' + encodeURIComponent(svg) + '")';
+        }
+
+        function initPuzzle() {
+            const frame = document.getElementById('puzzle-container');
+            const container = document.getElementById('puzzle-pieces');
+            container.innerHTML = '';
+            puzzlePieces = [];
+
+            // Fixed internal canvas so background slicing is exact (container may be responsive).
+            const W = Math.round(frame.clientWidth || 340);
+            const H = Math.round(frame.clientHeight || 210);
+            const DEPTH = 16; // brick thickness in px
+            // Leave headroom for the tilt/studs so nothing clips at the top.
+            const boardW = Math.round(W * 0.9);
+            const boardH = Math.round(H * 0.66);
+            const offX = Math.round((W - boardW) / 2);
+            const offY = Math.round(H * 0.16);
+            const tileW = boardW / PUZZLE_COLS;
+            const tileH = boardH / PUZZLE_ROWS;
+            const image = woolworthsLogoSVG(boardW, boardH);
+
+            // Assemble order: middle-out so the "W" square appears first.
+            const order = [2, 7, 1, 3, 6, 8, 0, 4, 5, 9];
+
+            for (let n = 0; n < 10; n++) {
+                const i = order[n];
+                const col = i % PUZZLE_COLS;
+                const row = Math.floor(i / PUZZLE_COLS);
+
+                const brick = document.createElement('div');
+                brick.className = 'brick';
+                brick.style.setProperty('--depth', DEPTH + 'px');
+                brick.style.width = tileW + 'px';
+                brick.style.height = tileH + 'px';
+                brick.style.left = (offX + col * tileW) + 'px';
+                brick.style.top = (offY + row * tileH) + 'px';
+                // Reading-order stacking so each brick's extrude tucks under its neighbour.
+                brick.style.zIndex = String(10 + row * PUZZLE_COLS + col);
+
+                // Top face = this brick's slice of the logo.
+                const top = document.createElement('div');
+                top.className = 'brick-top';
+                top.style.backgroundImage = image;
+                top.style.backgroundSize = boardW + 'px ' + boardH + 'px';
+                top.style.backgroundPosition = (-col * tileW) + 'px ' + (-row * tileH) + 'px';
+
+                // Four Lego studs (2x2) — style reads on both black and white slices.
+                [[0.16,0.14],[0.62,0.14],[0.16,0.60],[0.62,0.60]].forEach(([sx, sy]) => {
+                    const stud = document.createElement('div');
+                    stud.className = 'stud';
+                    stud.style.left = (sx * 100) + '%';
+                    stud.style.top = (sy * 100) + '%';
+                    top.appendChild(stud);
+                });
+
+                const front = document.createElement('div');
+                front.className = 'brick-wall front';
+                const right = document.createElement('div');
+                right.className = 'brick-wall right';
+
+                brick.appendChild(front);
+                brick.appendChild(right);
+                brick.appendChild(top);
+
+                // Scattered 3D starting pose (real depth via translateZ).
+                const rx = (Math.random() * 70 - 35);
+                const ry = (Math.random() * 90 - 45);
+                const rz = (Math.random() * 50 - 25);
+                const tx = (Math.random() * 130 - 65);
+                const ty = (Math.random() * 80 - 40);
+                const tz = (Math.random() * 170 + 60);
+                brick.dataset.scatter = `translate3d(${tx.toFixed(1)}px, ${ty.toFixed(1)}px, ${tz.toFixed(1)}px) rotateX(${rx.toFixed(1)}deg) rotateY(${ry.toFixed(1)}deg) rotateZ(${rz.toFixed(1)}deg) scale(0.9)`;
+                brick.style.transform = brick.dataset.scatter;
+                brick.style.opacity = '0.28';
+
+                container.appendChild(brick);
+                puzzlePieces.push(brick);
+            }
+        }
+
+        function assembleNextPuzzlePiece() {
+            const progressEl = document.getElementById('puzzle-progress');
+            const currentCount = parseInt(progressEl.textContent) || 0;
+            const nextIndex = currentCount;
+
+            if (nextIndex >= 10 || !puzzlePieces[nextIndex]) return;
+
+            const piece = puzzlePieces[nextIndex];
+
+            // Fly the brick home: identity transform seats it flat in the tilted 3D stage,
+            // so its walls + studs read as a solid Lego block.
+            piece.style.transition = 'transform 820ms cubic-bezier(0.34, 1.35, 0.5, 1), opacity 420ms ease';
+            piece.style.transform = 'translate3d(0,0,0) rotateX(0deg) rotateY(0deg) rotateZ(0deg) scale(1)';
+            piece.style.opacity = '1';
+
+            const newCount = nextIndex + 1;
+            progressEl.textContent = `${newCount}/10`;
+
+            if (newCount === 10) {
+                setTimeout(() => {
+                    const overlay = document.getElementById('final-logo-overlay');
+                    overlay.style.transition = 'opacity 500ms ease';
+                    overlay.style.opacity = '0';
+                    overlay.classList.remove('hidden');
+                    requestAnimationFrame(() => { overlay.style.opacity = '1'; });
+                    launchSmallConfetti(280, 120);
+                }, 920);
+            }
+
+            if (audioContext) {
+                playKalimba(920 + nextIndex * 40, 0.45);
+            }
+        }
+
+        function resetPuzzle() {
+            const progressEl = document.getElementById('puzzle-progress');
+            progressEl.textContent = '0/10';
+
+            const overlay = document.getElementById('final-logo-overlay');
+            overlay.style.transition = '';
+            overlay.style.opacity = '';
+            overlay.classList.add('hidden');
+
+            initPuzzle();
+        }
+
+        // ==================== GAME LOGIC ====================
+        function generateRoomCode() {
+            const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+            let code = '';
+            for (let i = 0; i < 8; i++) {
+                code += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return 'W' + code; // W for Woolworths
+        }
+
+        function createGameAsHost() {
+            currentRoom = generateRoomCode();
+            isHost = true;
+            myPlayerId = 'host-' + Date.now();
+            players = [];
+            currentQuestionIndex = 0;
+            gameState = 'lobby';
+            
+            document.getElementById('start-screen').classList.add('hidden');
+            document.getElementById('lobby-screen').classList.remove('hidden');
+            
+            // Display room code
+            document.getElementById('room-code-display').innerHTML = `
+                ${currentRoom} <i class="fa-solid fa-copy text-base ml-1.5 opacity-60"></i>
+            `;
+
+            // Open the cross-device host channel, then show the QR.
+            startHostPeer(currentRoom);
+            generateQRCode(currentRoom);
+            
+            // Add host as first player automatically
+            addPlayerToLobby({
+                id: myPlayerId,
+                name: 'Host (You)',
+                score: 0,
+                avatarSeed: 'host'
+            });
+            
+            updatePlayerCount();
+            document.getElementById('host-controls').classList.remove('hidden');
+        }
+
+        function joinUrlForRoom(code) {
+            // A scannable link that opens THIS page on the player's phone, pre-set to join.
+            const base = location.origin + location.pathname;
+            return base + '?room=' + encodeURIComponent(code);
+        }
+
+        function generateQRCode(code) {
+            const container = document.getElementById('qrcode-container');
+            container.innerHTML = '';
+            
+            // Encode a join URL so scanning with any phone camera opens the game to join.
+            new QRCode(container, {
+                text: joinUrlForRoom(code),
+                width: 168,
+                height: 168,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.M
+            });
+        }
+
+        function copyRoomCode() {
+            if (!currentRoom) return;
+            navigator.clipboard.writeText(currentRoom).then(() => {
+                const orig = document.getElementById('room-code-display').innerHTML;
+                document.getElementById('room-code-display').innerHTML = `COPIED! <i class="fa-solid fa-check ml-1"></i>`;
+                setTimeout(() => {
+                    if (document.getElementById('room-code-display')) {
+                        document.getElementById('room-code-display').innerHTML = orig;
+                    }
+                }, 1600);
+            }).catch(() => {
+                // Fallback
+                prompt('Copy this room code:', currentRoom);
+            });
+        }
+
+        function addPlayerToLobby(playerData) {
+            // Avoid duplicates
+            if (players.find(p => p.id === playerData.id)) return;
+            
+            players.push({
+                ...playerData,
+                score: playerData.score || 0,
+                answers: {}
+            });
+            
+            renderPlayersList();
+            updatePlayerCount();
+            
+            // If host, broadcast to other tabs
+            if (isHost) {
+                broadcast('player-joined', playerData);
+            }
+        }
+
+        function renderPlayersList() {
+            const container = document.getElementById('players-list');
+            container.innerHTML = '';
+            
+            if (players.length === 0) {
+                container.innerHTML = `<div class="text-center py-8 text-slate-400 text-sm">Waiting for players to join via QR or code...</div>`;
+                return;
+            }
+            
+            players.forEach(player => {
+                const el = document.createElement('div');
+                el.className = `flex items-center gap-x-3.5 px-4 py-[10px] bg-slate-50 hover:bg-white border border-transparent hover:border-slate-100 rounded-2xl transition-all`;
+                
+                const avatarColor = player.avatarSeed === 'host' ? '#111111' : getAvatarColor(player.id);
+                
+                el.innerHTML = `
+                    <div class="w-9 h-9 rounded-2xl flex-shrink-0 flex items-center justify-center text-white text-xl shadow-inner" style="background-color: ${avatarColor}">
+                        ${player.name.charAt(0).toUpperCase()}
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="font-bold">${player.name}</div>
+                        <div class="text-[10px] text-emerald-600 font-medium">READY • ${player.score} pts</div>
+                    </div>
+                    ${isHost && player.id !== myPlayerId ? `
+                    <button onclick="removePlayer('${player.id}', event)" class="text-red-400 hover:text-red-600 px-2 text-lg leading-none">&times;</button>
+                    ` : ''}
+                `;
+                container.appendChild(el);
+            });
+        }
+
+        function getAvatarColor(seed) {
+            const colors = ['#111111', '#111111', '#111111', '#1e40af', '#854d0e', '#b45309'];
+            let hash = 0;
+            for (let i = 0; i < seed.length; i++) hash = seed.charCodeAt(i) + ((hash << 5) - hash);
+            return colors[Math.abs(hash) % colors.length];
+        }
+
+        function updatePlayerCount() {
+            const el = document.getElementById('player-count');
+            if (el) el.textContent = `${players.length} player${players.length !== 1 ? 's' : ''} joined`;
+        }
+
+        function removePlayer(playerId, e) {
+            e.stopImmediatePropagation();
+            players = players.filter(p => p.id !== playerId);
+            renderPlayersList();
+            updatePlayerCount();
+        }
+
+        function simulateAddPlayer() {
+            if (!isHost || gameState !== 'lobby') return;
+            
+            const names = ['Thandi Mokoena', 'Sipho Dlamini', 'Lerato Nkosi', 'Johan van der Berg', 'Aisha Patel', 'Mandla Khumalo', 'Zanele Mthembu', 'Pieter van Wyk'];
+            const name = names[Math.floor(Math.random() * names.length)] + ' ' + Math.floor(Math.random() * 90 + 10);
+            
+            const newPlayer = {
+                id: 'player-' + Date.now(),
+                name: name,
+                score: 0,
+                avatarSeed: 'player' + Date.now()
+            };
+            
+            addPlayerToLobby(newPlayer);
+        }
+
+        function showJoinScreen() {
+            document.getElementById('join-modal').classList.remove('hidden');
+            document.getElementById('join-modal').classList.add('flex');
+            
+            // Pre-fill a plausible code if host has one in same browser session (demo convenience)
+            setTimeout(() => {
+                const input = document.getElementById('join-code-input');
+                if (currentRoom && input) input.value = currentRoom;
+            }, 180);
+        }
+
+        function hideJoinModal() {
+            stopQrScanner();
+            const modal = document.getElementById('join-modal');
+            modal.classList.remove('flex');
+            modal.classList.add('hidden');
+        }
+
+        // ==================== REAL QR SCANNER ====================
+        let qrScanner = null;
+        let qrScannerRunning = false;
+
+        function setScannerStatus(msg) {
+            const el = document.getElementById('scanner-status');
+            if (el) el.textContent = msg;
+        }
+
+        function showScannerError(msg) {
+            const el = document.getElementById('scanner-error');
+            if (!el) return;
+            el.textContent = msg;
+            el.classList.remove('hidden');
+        }
+
+        function extractRoomCode(decodedText) {
+            // The host QR encodes the room code directly, but also handle a full join URL.
+            let value = (decodedText || '').trim();
+            try {
+                if (value.includes('://') || value.includes('?')) {
+                    const url = new URL(value, window.location.href);
+                    value = url.searchParams.get('room') || url.searchParams.get('code') || value;
+                }
+            } catch (e) { /* not a URL, use raw */ }
+            return value.replace(/[^A-Za-z0-9]/g, '').toUpperCase().slice(0, 9);
+        }
+
+        async function startQrScanner() {
+            const readerEl = document.getElementById('qr-reader');
+            const errEl = document.getElementById('scanner-error');
+            errEl.classList.add('hidden');
+
+            if (typeof Html5Qrcode === 'undefined') {
+                showScannerError('Scanner library could not load. Please check your connection, or enter the room code manually below.');
+                return;
+            }
+            if (!window.isSecureContext) {
+                showScannerError('Your browser blocks the camera on non-secure pages. Open this page over https (e.g. GitHub Pages) or use localhost, then try again. You can still join with the room code below.');
+                return;
+            }
+
+            readerEl.classList.remove('hidden');
+            document.getElementById('scan-start-btn').classList.add('hidden');
+            document.getElementById('scan-stop-btn').classList.remove('hidden');
+            setScannerStatus('Starting camera…');
+
+            try {
+                qrScanner = new Html5Qrcode('qr-reader', { verbose: false });
+                await qrScanner.start(
+                    { facingMode: 'environment' },
+                    { fps: 10, qrbox: { width: 200, height: 200 } },
+                    onQrScanSuccess,
+                    () => {} // ignore per-frame decode errors
+                );
+                qrScannerRunning = true;
+                setScannerStatus('Point at the host QR');
+            } catch (err) {
+                document.getElementById('scan-start-btn').classList.remove('hidden');
+                document.getElementById('scan-stop-btn').classList.add('hidden');
+                readerEl.classList.add('hidden');
+                setScannerStatus('Camera off');
+                const name = (err && err.name) ? err.name : '';
+                if (name === 'NotAllowedError' || name === 'PermissionDeniedError') {
+                    showScannerError('Camera permission was denied. Allow camera access in your browser settings, or enter the room code manually below.');
+                } else if (name === 'NotFoundError' || name === 'OverconstrainedError') {
+                    showScannerError('No camera was found on this device. Enter the room code manually below.');
+                } else {
+                    showScannerError('Could not start the camera. Enter the room code manually below.');
+                }
+            }
+        }
+
+        function onQrScanSuccess(decodedText) {
+            const code = extractRoomCode(decodedText);
+            if (!code || code.length < 4) return;
+            setScannerStatus('QR detected ✓');
+            const input = document.getElementById('join-code-input');
+            if (input) input.value = code;
+            if (audioContext) playKalimba(1040, 0.35);
+            stopQrScanner();
+            // Auto-join once a valid code is scanned.
+            setTimeout(joinGame, 250);
+        }
+
+        function stopQrScanner() {
+            document.getElementById('scan-start-btn')?.classList.remove('hidden');
+            document.getElementById('scan-stop-btn')?.classList.add('hidden');
+            const readerEl = document.getElementById('qr-reader');
+            if (qrScanner && qrScannerRunning) {
+                qrScanner.stop().then(() => {
+                    try { qrScanner.clear(); } catch (e) {}
+                    qrScannerRunning = false;
+                    if (readerEl) { readerEl.innerHTML = ''; readerEl.classList.add('hidden'); }
+                    setScannerStatus('Camera off');
+                }).catch(() => {
+                    qrScannerRunning = false;
+                    if (readerEl) readerEl.classList.add('hidden');
+                    setScannerStatus('Camera off');
+                });
+            } else if (readerEl) {
+                readerEl.innerHTML = '';
+                readerEl.classList.add('hidden');
+                setScannerStatus('Camera off');
+            }
+        }
+
+        function joinGame() {
+            const code = document.getElementById('join-code-input').value.trim().toUpperCase();
+            const name = document.getElementById('join-name-input').value.trim() || 'Anonymous Shopper';
+            
+            if (!code || code.length < 4) {
+                alert('Please enter a valid room code');
+                return;
+            }
+            
+            currentRoom = code;
+            isHost = false;
+            myPlayerId = 'player-' + Date.now() + '-' + Math.floor(Math.random() * 9999);
+            
+            hideJoinModal();
+            
+            // Switch to lobby view
+            document.getElementById('start-screen').classList.add('hidden');
+            document.getElementById('lobby-screen').classList.remove('hidden');
+            
+            // Show room code
+            document.getElementById('room-code-display').innerHTML = currentRoom;
+            
+            // Hide host-only controls
+            document.getElementById('host-controls').classList.add('hidden');
+            document.getElementById('lobby-status').textContent = 'CONNECTING TO HOST…';
+            document.getElementById('lobby-status').className = 'text-xs px-3 py-1 bg-slate-100 text-slate-600 rounded-3xl font-bold';
+            
+            // Show self locally straight away
+            const me = { id: myPlayerId, name: name, score: 0, avatarSeed: myPlayerId };
+            players = [me];
+            renderPlayersList();
+
+            // Connect to the host across devices; announce ourselves once linked.
+            startPlayerPeer(currentRoom, (ok) => {
+                if (ok) {
+                    broadcast('player-joined', me);
+                    const status = document.getElementById('lobby-status');
+                    if (status) status.innerHTML = 'JOINED • WAITING FOR HOST';
+                } else {
+                    // Fall back to same-device channel (multi-tab) if PeerJS couldn't reach a host.
+                    broadcast('player-joined', me);
+                    const status = document.getElementById('lobby-status');
+                    if (status) status.innerHTML = 'COULD NOT REACH HOST — CHECK CODE';
+                }
+            });
+
+            // Same-device tabs still get notified immediately.
+            broadcast('player-joined', me);
+        }
+
+        function startGame() {
+            if (!isHost) return;
+            
+            if (players.length < 1) {
+                // Allow solo play for testing
+                if (!confirm('No other players yet. Start anyway for testing?')) return;
+            }
+            
+            gameState = 'playing';
+            currentQuestionIndex = 0;
+            playerAnswers = {};
+
+            // Build the room's shuffled question set (same seed => same order on every device)
+            activeQuestions = buildActiveQuestions(currentRoom);
+            
+            // Reset scores for fresh start
+            players.forEach(p => p.score = 0);
+            
+            document.getElementById('lobby-screen').classList.add('hidden');
+            document.getElementById('game-screen').classList.remove('hidden');
+            
+            // Show host controls
+            document.getElementById('host-game-controls').classList.remove('hidden');
+            document.getElementById('host-indicator').innerHTML = `<span class="px-3 py-1 text-xs bg-[#111111] text-white font-black rounded-3xl">HOST MODE</span>`;
+            
+            // Initialize puzzle
+            resetPuzzle();
+            
+            // Broadcast start
+            broadcast('game-started', {});
+            
+            // Load first question for everyone (including host)
+            loadQuestion(0);
+        }
+
+        function startGameForAll() {
+            // Called via broadcast on player tabs
+            if (isHost) return;
+            
+            gameState = 'playing';
+            currentQuestionIndex = 0;
+            playerAnswers = {};
+
+            // Same seed as the host => identical option order and correct index
+            activeQuestions = buildActiveQuestions(currentRoom);
+            
+            document.getElementById('lobby-screen').classList.add('hidden');
+            document.getElementById('game-screen').classList.remove('hidden');
+            
+            // Players don't see host controls
+            document.getElementById('host-game-controls').classList.add('hidden');
+            document.getElementById('host-indicator').innerHTML = `<span class="px-3 py-1 text-xs bg-emerald-600 text-white font-bold rounded-3xl">PLAYER</span>`;
+            
+            resetPuzzle();
+            loadQuestion(0);
+        }
+
+        function loadQuestion(index) {
+            if (index >= activeQuestions.length) {
+                endGame();
+                return;
+            }
+            
+            currentQuestionIndex = index;
+            const q = activeQuestions[index];
+            
+            // Update UI
+            document.getElementById('question-counter').innerHTML = `Q ${index + 1} / 10`;
+            document.getElementById('question-text').innerHTML = q.q;
+            
+            const container = document.getElementById('options-container');
+            container.innerHTML = '';
+            container.className = `grid grid-cols-1 sm:grid-cols-2 gap-3`;
+            
+            q.options.forEach((opt, i) => {
+                const btn = document.createElement('button');
+                btn.className = `option-btn w-full text-left px-6 py-[17px] border-2 border-slate-200 hover:border-[#111111] bg-white rounded-2xl font-medium flex items-start gap-x-4 group`;
+                btn.innerHTML = `
+                    <div class="w-7 h-7 flex-shrink-0 mt-0.5 rounded-xl border border-slate-300 flex items-center justify-center text-xs font-black text-slate-400 group-hover:border-[#111111] group-hover:text-[#111111] transition-colors">
+                        ${String.fromCharCode(65 + i)}
+                    </div>
+                    <div class="flex-1 text-[15.2px] leading-snug pt-px">${opt}</div>
+                `;
+                
+                btn.onclick = () => submitAnswer(i, btn);
+                container.appendChild(btn);
+            });
+            
+            // Reset timer UI
+            resetTimerUI();
+            
+            // Start 10 second timer
+            startQuestionTimer();
+            
+            // Clear previous answer status
+            document.getElementById('answer-status').classList.add('hidden');
+            document.getElementById('fun-fact-banner').classList.add('hidden');
+            
+            // If host, update status
+            if (isHost) {
+                document.getElementById('host-status-text').innerHTML = 'WAITING FOR ANSWERS...';
+                playerAnswers = {}; // reset for new question
+            }
+        }
+
+        function resetTimerUI() {
+            clearInterval(timerInterval);
+            timeLeft = 10;
+            
+            const timerText = document.getElementById('timer-text');
+            const timerBar = document.getElementById('timer-bar');
+            
+            timerText.textContent = '10';
+            timerText.style.color = '#111111';
+            timerBar.style.width = '100%';
+            timerBar.style.background = 'linear-gradient(to right, #111111, #111111, #111111)';
+        }
+
+        function startQuestionTimer() {
+            clearInterval(timerInterval);
+            
+            const timerText = document.getElementById('timer-text');
+            const timerBar = document.getElementById('timer-bar');
+            
+            timerInterval = setInterval(() => {
+                timeLeft -= 0.1;
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    timeLeft = 0;
+                    timerText.textContent = '0';
+                    timerBar.style.width = '0%';
+                    
+                    // Time's up
+                    if (!isHost) {
+                        // Player didn't answer in time
+                        lockPlayerOptions(null);
+                    } else {
+                        // Host: auto reveal if no one answered or after timeout
+                        setTimeout(() => {
+                            if (gameState === 'playing') revealCurrentQuestion();
+                        }, 650);
+                    }
+                } else {
+                    timerText.textContent = Math.ceil(timeLeft);
+                    
+                    // Color + width animation
+                    const pct = (timeLeft / 10) * 100;
+                    timerBar.style.width = pct + '%';
+                    
+                    if (timeLeft < 3.5) {
+                        timerText.style.color = '#dc2626';
+                        timerBar.style.background = '#dc2626';
+                    } else if (timeLeft < 6) {
+                        timerText.style.color = '#6b7280';
+                        timerBar.style.background = 'linear-gradient(to right, #6b7280, #111111)';
+                    }
+                }
+            }, 100);
+        }
+
+        function submitAnswer(choiceIndex, btnElement) {
+            if (!currentRoom || gameState !== 'playing') return;
+            
+            const q = activeQuestions[currentQuestionIndex];
+            const isCorrect = choiceIndex === q.correct;
+            const timeBonus = Math.max(0, Math.floor(timeLeft * 4.8)); // speed bonus
+            const points = isCorrect ? (65 + timeBonus) : 0;
+            
+            // Visual lock
+            lockPlayerOptions(choiceIndex);
+            
+            // Record locally
+            if (!myPlayerId) myPlayerId = 'local-' + Date.now();
+            
+            // Update my score immediately (optimistic for player)
+            const me = players.find(p => p.id === myPlayerId);
+            if (me) {
+                me.score = (me.score || 0) + points;
+            } else {
+                // If player not in list yet (edge case)
+                players.push({id: myPlayerId, name: 'You', score: points, avatarSeed: myPlayerId});
+            }
+            
+            // Send to host via broadcast
+            broadcast('answer-submitted', {
+                playerId: myPlayerId,
+                choice: choiceIndex,
+                timeLeft: timeLeft,
+                points: points,
+                isCorrect: isCorrect
+            });
+            
+            // Show immediate feedback for player
+            showLocalAnswerFeedback(isCorrect, points, q.options[choiceIndex]);
+            
+            // Update local leaderboard
+            updateLeaderboard();
+        }
+
+        function lockPlayerOptions(selectedIndex) {
+            const container = document.getElementById('options-container');
+            const buttons = container.querySelectorAll('button');
+            
+            buttons.forEach((btn, idx) => {
+                btn.disabled = true;
+                btn.style.pointerEvents = 'none';
+                
+                if (idx === selectedIndex) {
+                    btn.style.borderColor = '#111111';
+                    btn.style.backgroundColor = '#f1f1ef';
+                }
+            });
+        }
+
+        function showLocalAnswerFeedback(isCorrect, points, chosenText) {
+            const statusDiv = document.getElementById('answer-status');
+            const iconDiv = document.getElementById('status-icon');
+            const textDiv = document.getElementById('status-text');
+            const subDiv = document.getElementById('status-subtext');
+            
+            statusDiv.classList.remove('hidden');
+            
+            if (isCorrect) {
+                iconDiv.innerHTML = `<i class="fa-solid fa-check text-2xl text-white"></i>`;
+                iconDiv.style.background = '#16a34a';
+                textDiv.innerHTML = `Correct! +${points} points`;
+                textDiv.style.color = '#166534';
+                subDiv.innerHTML = `Great job! Speed bonus included.`;
+                
+                // Small confetti for correct
+                launchSmallConfetti(120, 80);
+            } else {
+                iconDiv.innerHTML = `<i class="fa-solid fa-times text-2xl text-white"></i>`;
+                iconDiv.style.background = '#dc2626';
+                textDiv.innerHTML = `Not quite this time`;
+                textDiv.style.color = '#991b1b';
+                subDiv.innerHTML = `The correct answer will be shown shortly.`;
+            }
+        }
+
+        function recordPlayerAnswer(playerId, choice, timeLeftVal) {
+            if (!isHost) return;
+            
+            playerAnswers[playerId] = { choice, timeLeft: timeLeftVal };
+            
+            // Update host status text
+            const answeredCount = Object.keys(playerAnswers).length;
+            document.getElementById('host-status-text').innerHTML = `${answeredCount} / ${players.length} answered`;
+            
+            // If everyone answered, host can be prompted to reveal faster (optional auto)
+            if (answeredCount >= players.length && timeLeft > 2) {
+                // Optional: auto reveal a bit early if all done
+                // For now we let host decide
+            }
+        }
+
+        function revealCurrentQuestion() {
+            if (!isHost) return;
+            
+            clearInterval(timerInterval);
+            
+            const q = activeQuestions[currentQuestionIndex];
+            const container = document.getElementById('options-container');
+            const buttons = container.querySelectorAll('button');
+            
+            // Reveal correct / wrong on all options
+            buttons.forEach((btn, idx) => {
+                btn.disabled = true;
+                
+                if (idx === q.correct) {
+                    btn.classList.add('correct');
+                    btn.style.borderColor = '#16a34a';
+                } else {
+                    btn.classList.add('wrong');
+                    btn.style.borderColor = '#dc2626';
+                    btn.style.opacity = '0.75';
+                }
+            });
+            
+            // Calculate final scores for this question
+            calculateAndUpdateScores(q);
+            
+            // Show fun fact
+            showFunFact(q.funFact);
+            
+            // Assemble next puzzle piece (everyone sees via broadcast)
+            assembleNextPuzzlePiece();
+            broadcast('question-revealed', { questionIndex: currentQuestionIndex, funFact: q.funFact });
+            
+            // Update leaderboard for everyone
+            broadcastLeaderboardUpdate();
+            
+            // Change host button text
+            document.getElementById('host-status-text').innerHTML = 'ANSWERS REVEALED • READY FOR NEXT';
+        }
+
+        function revealQuestionForAll(payload) {
+            if (isHost) return;
+            
+            clearInterval(timerInterval);
+            
+            const q = activeQuestions[payload.questionIndex];
+            const container = document.getElementById('options-container');
+            const buttons = container.querySelectorAll('button');
+            
+            buttons.forEach((btn, idx) => {
+                btn.disabled = true;
+                if (idx === q.correct) {
+                    btn.classList.add('correct');
+                } else {
+                    btn.classList.add('wrong');
+                    btn.style.opacity = '0.7';
+                }
+            });
+            
+            showFunFact(payload.funFact);
+            assembleNextPuzzlePiece();
+            
+            // Re-render leaderboard in case scores changed
+            updateLeaderboard();
+        }
+
+        function calculateAndUpdateScores(q) {
+            if (!isHost) return;
+            
+            players.forEach(player => {
+                const ans = playerAnswers[player.id];
+                if (!ans) return; // didn't answer
+                
+                const isCorrect = ans.choice === q.correct;
+                if (isCorrect) {
+                    const speedBonus = Math.max(0, Math.floor((ans.timeLeft || 5) * 4.8));
+                    const pointsEarned = 65 + speedBonus;
+                    player.score = (player.score || 0) + pointsEarned;
+                }
+            });
+            
+            // Re-render leaderboard
+            updateLeaderboard();
+        }
+
+        function showFunFact(fact) {
+            const banner = document.getElementById('fun-fact-banner');
+            const textEl = document.getElementById('fun-fact-text');
+            
+            textEl.innerHTML = fact;
+            banner.style.display = 'block';
+            banner.classList.remove('hidden');
+            
+            // Auto hide after some time (or host can advance)
+            setTimeout(() => {
+                if (!banner.classList.contains('hidden') && gameState === 'playing') {
+                    // banner.classList.add('hidden'); // keep visible until next Q
+                }
+            }, 12500);
+        }
+
+        function updateLeaderboard() {
+            const container = document.getElementById('leaderboard-list');
+            container.innerHTML = '';
+            
+            // Sort by score desc
+            const sorted = [...players].sort((a, b) => (b.score || 0) - (a.score || 0));
+            
+            sorted.forEach((player, idx) => {
+                const rank = idx + 1;
+                const el = document.createElement('div');
+                el.className = `leaderboard-item flex items-center gap-x-3 px-3.5 py-2.5 rounded-2xl ${rank <= 3 ? 'bg-amber-50 border border-amber-100' : 'bg-white border border-transparent'}`;
+                
+                const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : `<span class="font-mono text-xs w-5 text-center">${rank}</span>`;
+                
+                const avatarColor = player.avatarSeed === 'host' ? '#111111' : getAvatarColor(player.id);
+                
+                el.innerHTML = `
+                    <div class="w-6 text-center flex-shrink-0">${medal}</div>
+                    <div class="w-8 h-8 rounded-2xl flex-shrink-0 flex items-center justify-center text-white text-sm font-black shadow-inner" style="background-color: ${avatarColor}">
+                        ${player.name.charAt(0)}
+                    </div>
+                    <div class="flex-1 font-medium text-sm truncate">${player.name}</div>
+                    <div class="font-mono font-black text-lg tabular-nums text-right w-12">${player.score || 0}</div>
+                `;
+                container.appendChild(el);
+            });
+        }
+
+        function broadcastLeaderboardUpdate() {
+            if (!isHost) return;
+            broadcast('leaderboard-update', players.map(p => ({id: p.id, name: p.name, score: p.score})));
+        }
+
+        function updateLeaderboardFromBroadcast(updatedPlayers) {
+            if (isHost) return;
+            
+            // Merge scores from host broadcast
+            updatedPlayers.forEach(up => {
+                const localPlayer = players.find(p => p.id === up.id);
+                if (localPlayer) {
+                    localPlayer.score = up.score;
+                } else {
+                    // New player discovered
+                    players.push({id: up.id, name: up.name, score: up.score, avatarSeed: up.id});
+                }
+            });
+            
+            updateLeaderboard();
+        }
+
+        function nextQuestion() {
+            if (!isHost) return;
+            
+            const nextIdx = currentQuestionIndex + 1;
+            
+            // Hide fun fact
+            document.getElementById('fun-fact-banner').classList.add('hidden');
+            
+            broadcast('next-question', { nextIndex: nextIdx });
+            
+            if (nextIdx >= activeQuestions.length) {
+                endGame();
+            } else {
+                loadQuestion(nextIdx);
+            }
+        }
+
+        function goToNextQuestion(payload) {
+            if (isHost) return;
+            
+            document.getElementById('fun-fact-banner').classList.add('hidden');
+            
+            const nextIdx = payload.nextIndex;
+            if (nextIdx >= activeQuestions.length) {
+                endGameForAll({});
+            } else {
+                loadQuestion(nextIdx);
+            }
+        }
+
+        function endGame() {
+            if (!isHost) return;
+            
+            gameState = 'ended';
+            clearInterval(timerInterval);
+            
+            broadcast('game-ended', { finalPlayers: players });
+            
+            showEndScreen();
+        }
+
+        function endGameForAll(payload) {
+            gameState = 'ended';
+            clearInterval(timerInterval);
+            
+            if (payload.finalPlayers) {
+                players = payload.finalPlayers;
+            }
+            
+            showEndScreen();
+        }
+
+        function showEndScreen() {
+            document.getElementById('game-screen').classList.add('hidden');
+            document.getElementById('end-screen').classList.remove('hidden');
+            
+            // Ensure puzzle is complete
+            const progressEl = document.getElementById('puzzle-progress');
+            if (parseInt(progressEl.textContent) < 10) {
+                // Force complete animation if not already
+                for (let i = parseInt(progressEl.textContent); i < 10; i++) {
+                    setTimeout(() => assembleNextPuzzlePiece(), i * 120);
+                }
+            }
+            
+            // Render top 3 podium
+            renderPodium();
+            
+            // Render full final leaderboard
+            renderFinalLeaderboard();
+            
+            // Big celebration confetti
+            setTimeout(() => {
+                launchBigConfetti();
+            }, 420);
+        }
+
+        function renderPodium() {
+            const container = document.getElementById('podium-container');
+            container.innerHTML = '';
+            
+            const sorted = [...players].sort((a, b) => (b.score || 0) - (a.score || 0)).slice(0, 3);
+            
+            // Order: 2nd, 1st, 3rd for visual podium
+            const podiumOrder = [1, 0, 2]; // indices in sorted array
+            
+            podiumOrder.forEach((pos, visualPos) => {
+                const player = sorted[pos];
+                if (!player) return;
+                
+                const isFirst = pos === 0;
+                const height = isFirst ? 'h-40' : (pos === 1 ? 'h-32' : 'h-28');
+                const medal = pos === 0 ? '🥇' : pos === 1 ? '🥈' : '🥉';
+                const bg = pos === 0 ? 'from-amber-400 to-yellow-500' : (pos === 1 ? 'from-slate-300 to-slate-400' : 'from-orange-300 to-amber-400');
+                
+                const col = document.createElement('div');
+                col.className = `flex-1 flex flex-col items-center ${isFirst ? 'order-2' : (pos === 1 ? 'order-1' : 'order-3')}`;
+                
+                col.innerHTML = `
+                    <div class="text-center mb-1.5">
+                        <div class="text-5xl mb-1">${medal}</div>
+                        <div class="font-black text-xl tracking-tight">${player.name}</div>
+                        <div class="font-mono text-3xl font-black text-slate-700 tabular-nums">${player.score || 0}</div>
+                    </div>
+                    
+                    <div class="w-full max-w-[108px] ${height} bg-gradient-to-t ${bg} rounded-t-3xl flex items-end justify-center pb-4 shadow-inner border border-white/60">
+                        <div class="text-white text-xs font-black tracking-[1.5px] pb-1">TOP ${pos + 1}</div>
+                    </div>
+                `;
+                container.appendChild(col);
+            });
+        }
+
+        function renderFinalLeaderboard() {
+            const container = document.getElementById('final-leaderboard');
+            container.innerHTML = '';
+            
+            const sorted = [...players].sort((a, b) => (b.score || 0) - (a.score || 0));
+            
+            sorted.forEach((player, idx) => {
+                const row = document.createElement('div');
+                row.className = `flex items-center gap-x-4 px-5 py-[13px] ${idx % 2 === 0 ? 'bg-slate-50' : ''} rounded-2xl mx-1`;
+                
+                const rankHTML = idx < 3 ? 
+                    (idx === 0 ? '🥇' : idx === 1 ? '🥈' : '🥉') : 
+                    `<span class="font-mono w-6 text-center text-slate-400">${idx + 1}</span>`;
+                
+                const avatarColor = player.avatarSeed === 'host' ? '#111111' : getAvatarColor(player.id);
+                
+                row.innerHTML = `
+                    <div class="w-7">${rankHTML}</div>
+                    <div class="w-9 h-9 rounded-2xl flex-shrink-0 flex items-center justify-center text-white font-black text-lg shadow" style="background-color: ${avatarColor}">
+                        ${player.name.charAt(0)}
+                    </div>
+                    <div class="flex-1 font-semibold">${player.name}</div>
+                    <div class="font-mono font-black text-2xl w-16 text-right tabular-nums">${player.score || 0}</div>
+                `;
+                container.appendChild(row);
+            });
+        }
+
+        function launchSmallConfetti(x = 200, y = 120) {
+            if (typeof confetti === 'undefined') return;
+            
+            confetti({
+                particleCount: 70,
+                spread: 55,
+                origin: { x: x / window.innerWidth, y: y / window.innerHeight }
+            });
+        }
+
+        function launchBigConfetti() {
+            if (typeof confetti === 'undefined') return;
+            
+            const count = 220;
+            const defaults = { origin: { y: 0.6 } };
+            
+            function fire(particleRatio, opts) {
+                confetti(Object.assign({}, defaults, opts, {
+                    particleCount: Math.floor(count * particleRatio)
+                }));
+            }
+            
+            fire(0.25, { spread: 26, startVelocity: 55 });
+            fire(0.2, { spread: 60 });
+            fire(0.35, { spread: 100, decay: 0.91, scalar: 0.8 });
+            fire(0.1, { spread: 120, startVelocity: 25, decay: 0.92 });
+            fire(0.1, { spread: 120, startVelocity: 45 });
+        }
+
+        function downloadResults() {
+            const sorted = [...players].sort((a, b) => (b.score || 0) - (a.score || 0));
+            
+            let csvContent = "Rank,Player,Score\n";
+            sorted.forEach((p, i) => {
+                csvContent += `${i + 1},"${p.name}",${p.score || 0}\n`;
+            });
+            
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `KYC-Woolworths-Results-${currentRoom || 'session'}.csv`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function restartGame() {
+            // Full reset
+            if (broadcastChannel) broadcastChannel.close();
+            
+            location.reload(); // simplest reliable reset for prototype
+        }
+
+        function endGameEarly() {
+            if (!isHost || !confirm('End the game early and show results?')) return;
+            endGame();
+        }
+
+        // ==================== INITIALIZATION ====================
+        function initializeGame() {
+            initTailwind();
+            initAudio();
+            initBroadcast();
+            initPuzzle();
+            
+            // Keyboard support for host (space = reveal or next)
+            document.addEventListener('keydown', function(e) {
+                if (gameState !== 'playing' || !isHost) return;
+                
+                if (e.key === ' ' || e.key === 'Spacebar') {
+                    e.preventDefault();
+                    const status = document.getElementById('host-status-text').innerText;
+                    if (status.includes('WAITING') || status.includes('REVEALED')) {
+                        nextQuestion();
+                    } else {
+                        revealCurrentQuestion();
+                    }
+                }
+                
+                if (e.key.toLowerCase() === 'r' && document.getElementById('game-screen').classList.contains('hidden') === false) {
+                    revealCurrentQuestion();
+                }
+            });
+            
+            // Easter egg / tip
+            console.log('%c[KYC Challenge] Multi-tab demo ready. Open multiple tabs, create game in one, join in others using the same room code.', 'color:#854d0e');
+            
+            // Pre-warm a nice music hint
+            setTimeout(() => {
+                const musicNote = document.getElementById('music-text');
+                if (musicNote) musicNote.style.transition = 'all 0.4s';
+            }, 1200);
+            
+            // Make sure initial state is clean
+            document.getElementById('fun-fact-banner').classList.add('hidden');
+
+            // If the player arrived by scanning the host's QR (…?room=CODE), open Join pre-filled.
+            try {
+                const params = new URLSearchParams(location.search);
+                const room = params.get('room') || params.get('code');
+                if (room) {
+                    showJoinScreen();
+                    setTimeout(() => {
+                        const input = document.getElementById('join-code-input');
+                        if (input) input.value = room.toUpperCase();
+                        const nameInput = document.getElementById('join-name-input');
+                        if (nameInput) { nameInput.focus(); nameInput.select(); }
+                    }, 220);
+                }
+            } catch (e) {}
+        }
+
+        // Boot the experience
+        window.onload = initializeGame;
+    </script>
+</body>
+</html>
