@@ -1,0 +1,1548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Agentic AI Factory — Enterprise Reference Architecture &amp; Build Kit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#080f1a;
+  --plate:#0e1826;
+  --plate-2:#122032;
+  --rule:#1d3149;
+  --rule-soft:#16283d;
+  --cyan:#6fd3e8;
+  --cyan-dim:#2f7f92;
+  --amber:#e8a34e;
+  --amber-dim:#7a5a2c;
+  --text:#dbe6f2;
+  --muted:#7f97b3;
+  --faint:#516b8a;
+  --ok:#7fd6a6;
+  --display:"Space Grotesk", "Segoe UI", system-ui, sans-serif;
+  --body:"IBM Plex Sans", system-ui, -apple-system, sans-serif;
+  --mono:"IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --maxw:1240px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;background:var(--ink);color:var(--text);
+  font-family:var(--body);font-weight:300;font-size:16px;line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+  background-image:
+    linear-gradient(to right, rgba(29,49,73,.30) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(29,49,73,.30) 1px, transparent 1px);
+  background-size:64px 64px;
+}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
+a{color:var(--cyan);text-decoration:none}
+
+/* ---------- header ---------- */
+.topbar{position:sticky;top:0;z-index:50;background:rgba(8,15,26,.86);
+  backdrop-filter:blur(10px);border-bottom:1px solid var(--rule-soft)}
+.topbar .wrap{display:flex;align-items:center;gap:28px;height:58px}
+.brandmark{display:flex;align-items:center;gap:11px;font-family:var(--mono);
+  font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--text)}
+.brandmark i{width:18px;height:18px;border:1.5px solid var(--cyan);display:block;
+  position:relative;transform:rotate(45deg)}
+.brandmark i::after{content:"";position:absolute;inset:4px;background:var(--cyan);opacity:.55}
+.topnav{display:flex;gap:22px;margin-left:auto;font-family:var(--mono);font-size:11.5px;
+  letter-spacing:.1em;text-transform:uppercase}
+.topnav a{color:var(--muted)}
+.topnav a:hover{color:var(--cyan)}
+@media(max-width:820px){.topnav{display:none}}
+
+/* ---------- hero ---------- */
+.hero{padding:88px 0 64px;border-bottom:1px solid var(--rule-soft);position:relative;overflow:hidden}
+.eyebrow{font-family:var(--mono);font-size:11.5px;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--cyan-dim);margin-bottom:22px}
+.hero h1{font-family:var(--display);font-weight:600;font-size:clamp(34px,5.6vw,66px);
+  line-height:1.02;letter-spacing:-.025em;margin:0 0 8px}
+.hero h1 em{font-style:normal;color:var(--cyan)}
+.hero .sub{max-width:620px;color:var(--muted);font-size:17.5px;margin:22px 0 0}
+.thesis{display:grid;grid-template-columns:1fr auto;gap:40px;align-items:end;margin-top:56px}
+@media(max-width:900px){.thesis{grid-template-columns:1fr;gap:32px}}
+.ratio{width:100%;max-width:520px}
+.ratio-bar{display:flex;height:52px;border:1px solid var(--rule);font-family:var(--mono);font-size:11px}
+.ratio-bar span{display:flex;align-items:center;justify-content:center;letter-spacing:.1em;text-transform:uppercase}
+.ratio-plat{flex:70;background:linear-gradient(180deg,rgba(111,211,232,.22),rgba(111,211,232,.07));
+  color:var(--cyan);border-right:1px solid var(--rule)}
+.ratio-agent{flex:30;color:var(--amber);background:rgba(232,163,78,.07)}
+.ratio-cap{display:flex;justify-content:space-between;font-family:var(--mono);font-size:11px;
+  color:var(--faint);margin-top:10px;letter-spacing:.08em}
+.stat-col{display:flex;gap:34px;flex-wrap:wrap}
+@media(max-width:520px){.stat-col{gap:22px}}
+.stat b{display:block;font-family:var(--display);font-size:30px;font-weight:600;color:var(--text);line-height:1}
+.stat span{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--faint);display:block;margin-top:8px;max-width:120px;line-height:1.5}
+
+/* ---------- section frame ---------- */
+section{padding:76px 0;border-bottom:1px solid var(--rule-soft)}
+.sec-head{display:flex;align-items:baseline;gap:16px;margin-bottom:14px}
+.sec-num{font-family:var(--mono);font-size:11.5px;color:var(--cyan-dim);letter-spacing:.16em}
+.sec-head h2{font-family:var(--display);font-weight:600;font-size:clamp(24px,3.2vw,34px);
+  letter-spacing:-.015em;margin:0}
+.sec-lede{color:var(--muted);max-width:660px;margin:0 0 40px;font-size:16.5px}
+
+/* ---------- stack explorer ---------- */
+.explorer{display:grid;grid-template-columns:300px 1fr;gap:0;border:1px solid var(--rule);background:var(--plate)}
+@media(max-width:960px){.explorer{grid-template-columns:1fr}}
+.riser{border-right:1px solid var(--rule);padding:20px 0}
+@media(max-width:960px){.riser{border-right:0;border-bottom:1px solid var(--rule);
+  display:flex;overflow-x:auto;padding:14px;gap:8px;scrollbar-width:thin}}
+.riser-label{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--faint);padding:0 20px;margin:0 0 12px}
+.riser-label.second{margin-top:26px;padding-top:22px;border-top:1px solid var(--rule-soft)}
+@media(max-width:960px){.riser-label{display:none}}
+.floor{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:none;
+  border:0;border-left:2px solid transparent;color:var(--muted);cursor:pointer;
+  font-family:var(--body);font-size:14.5px;padding:10px 20px;transition:background .18s,color .18s,border-color .18s}
+.floor code{font-family:var(--mono);font-size:11px;color:var(--faint);letter-spacing:.06em}
+.floor:hover{background:var(--plate-2);color:var(--text)}
+.floor.is-active{background:var(--plate-2);color:var(--text);border-left-color:var(--cyan)}
+.floor.is-active code{color:var(--cyan)}
+.floor.spine.is-active{border-left-color:var(--amber)}
+.floor.spine.is-active code{color:var(--amber)}
+.floor:focus-visible{outline:2px solid var(--cyan);outline-offset:-2px}
+@media(max-width:960px){
+  .floor{width:auto;flex:0 0 auto;border-left:0;border-bottom:2px solid transparent;
+    white-space:nowrap;padding:8px 12px;background:var(--plate-2)}
+  .floor.is-active{border-bottom-color:var(--cyan)}
+  .floor.spine.is-active{border-bottom-color:var(--amber)}
+}
+.panelbox{padding:30px 32px 34px;min-width:0}
+@media(max-width:620px){.panelbox{padding:24px 18px 28px}}
+.panel{display:none}
+.panel.is-active{display:block;animation:fade .28s ease}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.panel-kicker{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--cyan-dim);margin-bottom:10px}
+.panel.spine .panel-kicker{color:var(--amber-dim)}
+.panel h3{font-family:var(--display);font-weight:600;font-size:26px;letter-spacing:-.015em;margin:0 0 12px}
+.panel-lede{color:var(--muted);margin:0 0 26px;max-width:70ch}
+.facts{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid var(--rule-soft);margin-bottom:28px}
+@media(max-width:720px){.facts{grid-template-columns:1fr}}
+.fact{padding:18px 20px}
+.fact + .fact{border-left:1px solid var(--rule-soft)}
+@media(max-width:720px){.fact + .fact{border-left:0;border-top:1px solid var(--rule-soft)}}
+.fact h4{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--faint);margin:0 0 12px;font-weight:500}
+.fact ul{margin:0;padding-left:18px;font-size:14.5px;color:var(--text)}
+.fact li{margin-bottom:8px}
+.fact li:last-child{margin-bottom:0}
+.fact.risk li::marker{color:var(--amber)}
+.fact.pick li::marker{color:var(--cyan)}
+
+/* ---------- code ---------- */
+.codewrap{border:1px solid var(--rule);background:#060c15;margin-bottom:20px}
+.codebar{display:flex;align-items:center;gap:12px;padding:9px 14px;border-bottom:1px solid var(--rule-soft);
+  background:var(--plate)}
+.codebar .file{font-family:var(--mono);font-size:11.5px;color:var(--muted);letter-spacing:.04em;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.codebar .lang{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--cyan-dim);border:1px solid var(--rule);padding:2px 7px}
+.copy{margin-left:auto;background:none;border:1px solid var(--rule);color:var(--muted);
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+  padding:5px 11px;cursor:pointer;transition:.18s}
+.copy:hover{border-color:var(--cyan);color:var(--cyan)}
+.copy.done{border-color:var(--ok);color:var(--ok)}
+pre{margin:0;padding:18px 16px;overflow-x:auto;font-family:var(--mono);font-size:12.6px;
+  line-height:1.72;color:#c3d4e6;tab-size:2}
+@media(max-width:620px){pre{font-size:11.6px;padding:14px 12px}}
+.tok-c{color:#4f6a86;font-style:italic}
+.tok-s{color:#9ad9b8}
+.tok-k{color:#6fd3e8}
+.tok-n{color:#e8a34e}
+.tok-d{color:#b79cf5}
+.tok-y{color:#6fd3e8}
+
+/* ---------- floor plan ---------- */
+.floorplan{display:grid;grid-template-columns:1fr 216px;gap:0;border:1px solid var(--rule);background:var(--plate)}
+@media(max-width:900px){.floorplan{grid-template-columns:1fr}}
+.fp-floors{padding:16px;display:flex;flex-direction:column;gap:0}
+.fp-row{display:flex;gap:10px}
+.fp-block{flex:1;display:block;text-align:left;background:var(--plate-2);border:1px solid var(--rule);
+  color:var(--text);font-family:var(--body);padding:13px 15px;cursor:pointer;min-width:0;
+  transition:border-color .18s,background .18s,transform .18s}
+.fp-block:hover{border-color:var(--cyan);background:#152539;transform:translateY(-1px)}
+.fp-block.is-lit{border-color:var(--cyan);background:#16293e;box-shadow:inset 0 0 0 1px rgba(111,211,232,.25)}
+.fp-block:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+.fp-block code{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.16em;
+  color:var(--cyan-dim);margin-bottom:5px}
+.fp-block b{font-family:var(--display);font-weight:600;font-size:15px;display:block;letter-spacing:-.01em}
+.fp-block span{font-size:12.5px;color:var(--muted);display:block;margin-top:3px;line-height:1.45}
+.fp-block.base{background:linear-gradient(180deg,#132538,#0f1c2c)}
+.fp-tick{display:flex;justify-content:center;color:var(--rule);font-family:var(--mono);font-size:12px;
+  line-height:1;padding:5px 0}
+.fp-spines{border-left:1px solid var(--rule);padding:16px;display:flex;flex-direction:column;gap:10px}
+@media(max-width:900px){.fp-spines{border-left:0;border-top:1px solid var(--rule)}}
+.fp-spines .fp-cap{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--faint);margin:0 0 2px}
+.fp-spine{flex:1;display:block;text-align:left;background:rgba(232,163,78,.06);
+  border:1px solid var(--amber-dim);color:var(--text);font-family:var(--body);
+  padding:11px 13px;cursor:pointer;transition:.18s}
+.fp-spine:hover,.fp-spine.is-lit{background:rgba(232,163,78,.15);border-color:var(--amber)}
+.fp-spine:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+.fp-spine code{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.16em;
+  color:var(--amber);margin-bottom:4px}
+.fp-spine b{font-family:var(--display);font-weight:600;font-size:14px;letter-spacing:-.01em}
+.fp-legend{display:flex;gap:20px;flex-wrap:wrap;margin-top:16px;font-family:var(--mono);
+  font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint)}
+.fp-legend i{display:inline-block;width:9px;height:9px;margin-right:7px;vertical-align:middle}
+.fp-legend .l1{border:1px solid var(--cyan)}
+.fp-legend .l2{border:1px solid var(--amber);background:rgba(232,163,78,.2)}
+
+/* ---------- layer diagrams ---------- */
+.diagram{border:1px solid var(--rule-soft);background:#0a1420;margin-bottom:28px}
+.dg-head{display:flex;align-items:center;gap:10px;padding:9px 14px;border-bottom:1px solid var(--rule-soft)}
+.dg-head span{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint)}
+.dg-scroll{overflow-x:auto;padding:20px 16px 6px}
+.dg-flow{display:flex;align-items:stretch;min-width:min-content}
+.dg-stage{display:flex;flex-direction:column;justify-content:center;gap:7px;flex:0 0 auto}
+.dg-arrow{flex:0 0 auto;display:flex;align-items:center;padding:0 9px;color:var(--rule);
+  font-family:var(--mono);font-size:14px}
+.dg-node{background:var(--plate-2);border:1px solid var(--rule);color:var(--text);cursor:pointer;
+  font-family:var(--mono);font-size:11.5px;letter-spacing:.02em;padding:9px 12px;white-space:nowrap;
+  text-align:left;transition:.16s}
+.dg-node:hover{border-color:var(--cyan);color:var(--cyan)}
+.dg-node.is-on{border-color:var(--cyan);color:var(--cyan);background:#132a3a}
+.dg-node:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+.dg-node.k-ext{border-style:dashed;color:var(--muted);background:transparent}
+.dg-node.k-ext:hover,.dg-node.k-ext.is-on{color:var(--text);border-color:var(--muted)}
+.dg-node.k-gate{border-color:var(--amber-dim);color:var(--amber)}
+.dg-node.k-gate:hover,.dg-node.k-gate.is-on{border-color:var(--amber);background:rgba(232,163,78,.12)}
+.dg-node.k-ghost{border-style:dotted;color:var(--faint);background:transparent}
+.dg-rail{display:flex;flex-wrap:wrap;gap:7px;align-items:center;padding:14px 16px 16px;
+  border-top:1px dashed var(--rule-soft);margin-top:6px}
+.dg-rail em{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--faint);font-style:normal;margin-right:4px}
+.dg-node.k-store{border-style:dashed;border-color:var(--rule);color:var(--muted);font-size:11px;padding:7px 10px}
+.dg-node.k-store:hover,.dg-node.k-store.is-on{color:#b79cf5;border-color:#6a5aa8}
+.dg-note{border-top:1px solid var(--rule-soft);padding:13px 16px;font-size:13.5px;color:var(--muted);
+  min-height:56px;line-height:1.55}
+.dg-note b{font-family:var(--mono);font-size:11px;letter-spacing:.08em;color:var(--cyan);
+  display:block;margin-bottom:4px;font-weight:500;text-transform:uppercase}
+.panel.spine .dg-note b{color:var(--amber)}
+
+/* ---------- patterns ---------- */
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(268px,1fr));gap:0;
+  border-top:1px solid var(--rule);border-left:1px solid var(--rule)}
+.card{border-right:1px solid var(--rule);border-bottom:1px solid var(--rule);padding:22px 22px 24px;
+  background:var(--plate);transition:background .2s}
+.card:hover{background:var(--plate-2)}
+.card .pid{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;color:var(--cyan-dim)}
+.card h4{font-family:var(--display);font-size:18px;font-weight:600;margin:10px 0 8px;letter-spacing:-.01em}
+.card p{margin:0 0 14px;font-size:14.5px;color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--faint);border:1px solid var(--rule);padding:3px 7px}
+
+/* ---------- gates ---------- */
+.gates{display:grid;grid-template-columns:repeat(5,1fr);gap:0;border:1px solid var(--rule)}
+@media(max-width:900px){.gates{grid-template-columns:1fr}}
+.gate{padding:22px 20px 24px;border-right:1px solid var(--rule);background:var(--plate)}
+.gate:last-child{border-right:0}
+@media(max-width:900px){.gate{border-right:0;border-bottom:1px solid var(--rule)}
+  .gate:last-child{border-bottom:0}}
+.gate .g{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;color:var(--amber)}
+.gate h4{font-family:var(--display);font-size:17px;font-weight:600;margin:10px 0 10px}
+.gate p{margin:0;font-size:14px;color:var(--muted)}
+.gate .verdict{margin-top:14px;font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--faint);border-top:1px solid var(--rule-soft);padding-top:10px}
+
+/* ---------- roadmap ---------- */
+.phases{border:1px solid var(--rule)}
+.phase{display:grid;grid-template-columns:130px 1fr 240px;gap:0;border-bottom:1px solid var(--rule);
+  background:var(--plate)}
+.phase:last-child{border-bottom:0}
+@media(max-width:860px){.phase{grid-template-columns:1fr}}
+.phase-when{padding:22px 20px;border-right:1px solid var(--rule);font-family:var(--mono);font-size:12px;color:var(--cyan)}
+.phase-when b{display:block;font-size:22px;font-family:var(--display);color:var(--text);margin-bottom:6px}
+.phase-body{padding:22px 24px;border-right:1px solid var(--rule)}
+@media(max-width:860px){.phase-when,.phase-body{border-right:0;border-bottom:1px solid var(--rule-soft)}}
+.phase-body h4{font-family:var(--display);font-size:19px;font-weight:600;margin:0 0 8px}
+.phase-body p{margin:0 0 12px;color:var(--muted);font-size:14.5px}
+.phase-exit{padding:22px 20px;font-size:13.5px;color:var(--text)}
+.phase-exit h5{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--faint);margin:0 0 10px;font-weight:500}
+
+/* ---------- metrics ---------- */
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:0;
+  border-top:1px solid var(--rule);border-left:1px solid var(--rule)}
+.kpi{border-right:1px solid var(--rule);border-bottom:1px solid var(--rule);padding:20px 20px 22px;background:var(--plate)}
+.kpi b{display:block;font-family:var(--display);font-size:17px;font-weight:600;margin-bottom:8px}
+.kpi span{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--cyan-dim)}
+.kpi p{margin:10px 0 0;font-size:13.5px;color:var(--muted)}
+
+/* ---------- footer ---------- */
+footer{padding:44px 0 64px;color:var(--faint);font-size:13.5px}
+footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.mono{font-family:var(--mono);font-size:11.5px;letter-spacing:.1em}
+@media(prefers-reduced-motion:reduce){
+  *{animation:none !important;transition:none !important}
+  html{scroll-behavior:auto}
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap">
+    <div class="brandmark"><i></i><span>Agentic AI Factory</span></div>
+    <nav class="topnav">
+      <a href="#plan">Floor plan</a>
+      <a href="#stack">Layers</a>
+      <a href="#patterns">Patterns</a>
+      <a href="#gates">Governance</a>
+      <a href="#roadmap">Phases</a>
+      <a href="#metrics">Metrics</a>
+    </nav>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="wrap">
+    <p class="eyebrow">Enterprise reference architecture &middot; build kit</p>
+    <h1>Agents get <em>assembled</em>,<br>not authored.</h1>
+    <p class="sub">A factory is an operating model, not a framework. One platform team owns the paved road — runtime, guardrails, connectors, evaluations, pipelines. Delivery squads compose agents on top of it. Every layer below ships with the code to build it.</p>
+
+    <div class="thesis">
+      <div class="ratio">
+        <div class="ratio-bar">
+          <span class="ratio-plat">Platform &mdash; built once</span>
+          <span class="ratio-agent">Agent</span>
+        </div>
+        <div class="ratio-cap"><span>Thick platform</span><span>Thin agent</span></div>
+      </div>
+      <div class="stat-col">
+        <div class="stat"><b>7</b><span>Stack floors</span></div>
+        <div class="stat"><b>4</b><span>Cross-cutting spines</span></div>
+        <div class="stat"><b>12</b><span>Interactive diagrams</span></div>
+        <div class="stat"><b>14</b><span>Build snippets</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<section id="plan">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num">01</span><h2>Floor plan</h2></div>
+    <p class="sec-lede">A request enters at the top and leaves through a system of record at the bottom. Floors are passed through; spines are conditions met at every floor. Select any block to open its schematic and build code.</p>
+
+    <div class="floorplan">
+      <div class="fp-floors">
+        <button class="fp-block" data-goto="L01"><code>L01</code><b>Channel &amp; experience</b><span>Teams &middot; ITSM &middot; web &middot; voice &middot; API, normalised to one request</span></button>
+        <div class="fp-tick">&#9662;</div>
+        <button class="fp-block" data-goto="L02"><code>L02</code><b>Agent orchestration</b><span>Supervisor, workers, durable state, human interrupts</span></button>
+        <div class="fp-tick">&#9662;</div>
+        <button class="fp-block" data-goto="L03"><code>L03</code><b>Runtime services</b><span>Tool registry, memory, policy engine — the reuse engine</span></button>
+        <div class="fp-tick">&#9662;</div>
+        <div class="fp-row">
+          <button class="fp-block" data-goto="L04"><code>L04</code><b>Model gateway</b><span>Routing, quota, failover, metering</span></button>
+          <button class="fp-block" data-goto="L05"><code>L05</code><b>Knowledge &amp; RAG</b><span>Hybrid retrieval, ACL trimming, grounding</span></button>
+        </div>
+        <div class="fp-tick">&#9662;</div>
+        <button class="fp-block" data-goto="L07"><code>L07</code><b>Integration fabric</b><span>Idempotent write-actions, ledger, compensations</span></button>
+        <div class="fp-tick">&#9662;</div>
+        <button class="fp-block base" data-goto="L06"><code>L06</code><b>Data platform &mdash; foundation</b><span>Fabric / Databricks: grounding data, golden evaluation sets, agent telemetry</span></button>
+      </div>
+      <div class="fp-spines">
+        <p class="fp-cap">Spines &middot; every floor</p>
+        <button class="fp-spine" data-goto="S01"><code>S01</code><b>Security &amp; identity</b></button>
+        <button class="fp-spine" data-goto="S02"><code>S02</code><b>DevSecOps &amp; eval CI</b></button>
+        <button class="fp-spine" data-goto="S03"><code>S03</code><b>Observability &amp; FinOps</b></button>
+        <button class="fp-spine" data-goto="S04"><code>S04</code><b>Responsible AI</b></button>
+      </div>
+    </div>
+    <div class="fp-legend">
+      <span><i class="l1"></i>Floor &mdash; request passes through</span>
+      <span><i class="l2"></i>Spine &mdash; condition met at every floor</span>
+    </div>
+  </div>
+</section>
+
+<section id="stack">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num">02</span><h2>The stack</h2></div>
+    <p class="sec-lede">Seven floors carry a request from a channel to a system of record. Four spines run the full height of the building — they are not layers you pass through, they are conditions every layer meets. Select any one to read the brief, the decisions worth fighting over, and the code that implements it.</p>
+
+    <div class="explorer">
+      <div class="riser" role="tablist" aria-label="Architecture layers">
+        <p class="riser-label">Floors</p>
+        <button class="floor is-active" role="tab" aria-selected="true" data-target="L01"><code>L01</code> Channel &amp; experience</button>
+        <button class="floor" role="tab" aria-selected="false" data-target="L02"><code>L02</code> Agent orchestration</button>
+        <button class="floor" role="tab" aria-selected="false" data-target="L03"><code>L03</code> Runtime services</button>
+        <button class="floor" role="tab" aria-selected="false" data-target="L04"><code>L04</code> Model gateway</button>
+        <button class="floor" role="tab" aria-selected="false" data-target="L05"><code>L05</code> Knowledge &amp; RAG</button>
+        <button class="floor" role="tab" aria-selected="false" data-target="L06"><code>L06</code> Data platform</button>
+        <button class="floor" role="tab" aria-selected="false" data-target="L07"><code>L07</code> Integration fabric</button>
+        <p class="riser-label second">Spines</p>
+        <button class="floor spine" role="tab" aria-selected="false" data-target="S01"><code>S01</code> Security &amp; identity</button>
+        <button class="floor spine" role="tab" aria-selected="false" data-target="S02"><code>S02</code> DevSecOps &amp; eval CI</button>
+        <button class="floor spine" role="tab" aria-selected="false" data-target="S03"><code>S03</code> Observability &amp; FinOps</button>
+        <button class="floor spine" role="tab" aria-selected="false" data-target="S04"><code>S04</code> Responsible AI</button>
+      </div>
+
+      <div class="panelbox">
+
+        <!-- L01 -->
+        <div class="panel is-active" id="L01" role="tabpanel">
+          <p class="panel-kicker">Floor 01</p>
+          <h3>Channel &amp; experience</h3>
+          <p class="panel-lede">One agent, many front doors. Teams, the ITSM portal, web, voice and raw API all produce the same request object — so a squad never rebuilds an agent to reach a new audience.</p>
+          <div class="diagram" data-diagram="L01"></div>
+          <div class="facts">
+            <div class="fact pick"><h4>Decisions that hold up</h4><ul>
+              <li>Channel adapters normalise; agents stay channel-blind.</li>
+              <li>Carry the user's token from the first hop — identity is not re-derived later.</li>
+              <li><code>thread_id</code> is the durable conversation key the checkpointer uses.</li>
+            </ul></div>
+            <div class="fact risk"><h4>What goes wrong</h4><ul>
+              <li>Channel logic leaking into prompts ("if Teams, reply shorter").</li>
+              <li>A shared bot identity that erases who actually asked.</li>
+              <li>Reply shapes that differ per channel, so evaluation can't compare runs.</li>
+            </ul></div>
+          </div>
+          <div class="codewrap">
+            <div class="codebar"><span class="lang">python</span><span class="file">platform/channel/contract.py</span><button class="copy">Copy</button></div>
+<pre data-lang="python"># One contract in, one contract out. Every channel adapts to this.
+from dataclasses import dataclass, field
+from typing import Any, Literal
+
+Channel = Literal["teams", "itsm", "web", "voice", "api"]
+
+@dataclass
+class AgentRequest:
+    tenant_id: str
+    user_upn: str                 # real user identity, never a shared service account
+    channel: Channel
+    utterance: str
+    thread_id: str                # durable key for the orchestration checkpointer
+    user_token: str               # exchanged on-behalf-of at the tool boundary
+    attachments: list[dict[str, Any]] = field(default_factory=list)
+    locale: str = "en-IN"
+
+@dataclass
+class AgentReply:
+    text: str
+    citations: list[dict[str, str]] = field(default_factory=list)
+    actions_taken: list[str] = field(default_factory=list)
+    needs_human: bool = False
+    trace_id: str = ""
+    cost_usd: float = 0.0
+
+# --- adapter: ITSM ticket -> AgentRequest -----------------------------------
+def from_itsm(payload: dict) -> AgentRequest:
+    body = payload["short_description"] + "\n" + payload.get("description", "")
+    return AgentRequest(
+        tenant_id=payload["company_id"],
+        user_upn=payload["caller"]["email"],
+        channel="itsm",
+        utterance=body.strip(),
+        thread_id="itsm:" + payload["sys_id"],
+        user_token=payload["_oauth"]["access_token"],
+    )
+
+def render_for(channel: Channel, reply: AgentReply) -> dict:
+    """Formatting lives here. The agent never learns what a channel looks like."""
+    return RENDERERS[channel](reply)
+</pre>
+          </div>
+        </div>
+
+        <!-- L02 -->
+        <div class="panel" id="L02" role="tabpanel">
+          <p class="panel-kicker">Floor 02</p>
+          <h3>Agent orchestration</h3>
+          <p class="panel-lede">A supervisor routes to workers, state is durable, and high-risk steps stop at a human. Standardise the topology across squads — bespoke orchestration per project is the single biggest source of unmaintainable agents.</p>
+          <div class="diagram" data-diagram="L02"></div>
+          <div class="facts">
+            <div class="fact pick"><h4>Decisions that hold up</h4><ul>
+              <li>Durable checkpointer (Postgres/Redis) so runs survive restarts and can be replayed.</li>
+              <li>Human-in-the-loop is an <em>interrupt in the graph</em>, not a UI afterthought.</li>
+              <li>Graph shape is declared once per pattern and reused, not redrawn per use case.</li>
+            </ul></div>
+            <div class="fact risk"><h4>What goes wrong</h4><ul>
+              <li>Free-roaming agent loops with no step budget or terminal state.</li>
+              <li>State held in memory — you can't audit or resume what you didn't persist.</li>
+              <li>Approval implemented as a prompt instruction instead of control flow.</li>
+            </ul></div>
+          </div>
+          <div class="codewrap">
+            <div class="codebar"><span class="lang">python</span><span class="file">platform/orchestration/graph.py</span><button class="copy">Copy</button></div>
+<pre data-lang="python">from typing import TypedDict
+from langgraph.graph import StateGraph, START, END
+from langgraph.checkpoint.postgres import PostgresSaver
+from langgraph.types import interrupt, Command
+
+class FactoryState(TypedDict):
+    request: dict
+    route: str
+    evidence: list[dict]
+    draft: str
+    risk: str          # low | medium | high | restricted
+    steps: int
+
+MAX_STEPS = 12
+ROUTES = {"how_to": "knowledge", "access": "action", "outage": "triage"}
+
+def supervisor(state: FactoryState):
+    if state["steps"] >= MAX_STEPS:                 # every graph has a step budget
+        return Command(goto=END, update={"draft": "Handing over — step budget reached."})
+    intent = classify(state["request"]["utterance"])
+    return Command(goto=ROUTES.get(intent, "knowledge"),
+                   update={"route": intent, "steps": state["steps"] + 1})
+
+def approval_gate(state: FactoryState):
+    if state["risk"] in ("high", "restricted"):
+        # execution pauses here and resumes on the approver's verdict
+        verdict = interrupt({"summary": state["draft"], "risk": state["risk"]})
+        if verdict["decision"] != "approve":
+            return Command(goto=END, update={"draft": "Declined by approver."})
+    return Command(goto="act")
+
+builder = StateGraph(FactoryState)
+builder.add_node("supervisor", supervisor)
+builder.add_node("knowledge", knowledge_worker)
+builder.add_node("triage", triage_worker)
+builder.add_node("action", action_planner)
+builder.add_node("approval_gate", approval_gate)
+builder.add_node("act", action_executor)
+builder.add_edge(START, "supervisor")
+builder.add_edge("knowledge", END)
+builder.add_edge("triage", "supervisor")
+builder.add_edge("action", "approval_gate")
+builder.add_edge("act", END)
+
+graph = builder.compile(checkpointer=PostgresSaver.from_conn_string(PG_DSN))
+</pre>
+          </div>
+        </div>
+
+        <!-- L03 -->
+        <div class="panel" id="L03" role="tabpanel">
+          <p class="panel-kicker">Floor 03</p>
+          <h3>Runtime services</h3>
+          <p class="panel-lede">The reuse engine, and the layer most programmes skip. Tools are registered once as MCP servers, memory is a service, and a policy engine decides what an agent may call, spend and decide without a human.</p>
+          <div class="diagram" data-diagram="L03"></div>
+          <div class="facts">
+            <div class="fact pick"><h4>Decisions that hold up</h4><ul>
+              <li>Every integration published once, versioned, with a declared risk class.</li>
+              <li>Authorisation is data in a registry, not <code>if</code> statements in agent code.</li>
+              <li>Per-run call budgets — an agent cannot retry a write forever.</li>
+            </ul></div>
+            <div class="fact risk"><h4>What goes wrong</h4><ul>
+              <li>Each squad writing its own ServiceNow client. Now you have nine.</li>
+              <li>Tools handed to the model with no scope check before execution.</li>
+              <li>Memory that stores one tenant's context where another can retrieve it.</li>
+            </ul></div>
+          </div>
+          <div class="codewrap">
+            <div class="codebar"><span class="lang">python</span><span class="file">platform/runtime/registry.py</span><button class="copy">Copy</button></div>
+<pre data-lang="python"># Tools are platform assets. Registered once, consumed by many agents.
+TOOL_REGISTRY = {
+    "itsm.reset_password": {
+        "server": "https://mcp.internal/itsm",     # MCP is the standard tool interface
+        "version": "2.3.0",
+        "write": True,
+        "risk": "high",
+        "scopes": ["Incident.Write", "Identity.Reset"],
+        "allowed_agents": ["itsm-resolver", "service-desk-copilot"],
+        "max_calls_per_run": 1,
+        "owner": "platform-integrations",
+    },
+    "kb.search": {
+        "server": "https://mcp.internal/knowledge",
+        "version": "1.8.2", "write": False, "risk": "low",
+        "scopes": ["Knowledge.Read"], "allowed_agents": ["*"], "max_calls_per_run": 6,
+        "owner": "platform-knowledge",
+    },
+}
+
+class PolicyError(Exception):
+    """Raised before a tool runs, never after."""
+
+def authorize(agent_id: str, tool: str, ctx) -> dict:
+    spec = TOOL_REGISTRY.get(tool)
+    if spec is None:
+        raise PolicyError(tool + " is not a registered tool")
+    if "*" not in spec["allowed_agents"] and agent_id not in spec["allowed_agents"]:
+        raise PolicyError(agent_id + " is not entitled to " + tool)
+    if not set(spec["scopes"]).issubset(ctx.granted_scopes):
+        raise PolicyError("user lacks scopes for " + tool)
+    if spec["write"] and spec["risk"] == "high" and not ctx.human_approved:
+        raise PolicyError("high-risk write requires recorded approval")
+    if ctx.calls_made(tool) >= spec["max_calls_per_run"]:
+        raise PolicyError("call budget exhausted for " + tool)
+    return spec
+
+async def invoke(agent_id: str, tool: str, args: dict, ctx):
+    spec = authorize(agent_id, tool, ctx)
+    with span("tool.call", tool=tool, version=spec["version"], agent=agent_id):
+        return await mcp_client(spec["server"]).call(tool, args, headers=ctx.obo_headers)
+</pre>
+          </div>
+        </div>
+
+        <!-- L04 -->
+        <div class="panel" id="L04" role="tabpanel">
+          <p class="panel-kicker">Floor 04</p>
+          <h3>Model gateway</h3>
+          <p class="panel-lede">No squad holds a model endpoint. One gateway routes by sensitivity, cost and latency, enforces quota, falls back on failure and charges every token back to the agent that spent it.</p>
+          <div class="diagram" data-diagram="L04"></div>
+          <div class="facts">
+            <div class="fact pick"><h4>Decisions that hold up</h4><ul>
+              <li>Route on data sensitivity first, cost second — residency is not negotiable.</li>
+              <li>Model choice is config, so swapping a provider is a pull request.</li>
+              <li>Meter and charge at the point of spend, per tenant and per agent.</li>
+            </ul></div>
+            <div class="fact risk"><h4>What goes wrong</h4><ul>
+              <li>Frontier models used for classification you could do for a hundredth of the price.</li>
+              <li>Provider keys distributed to teams — no quota, no visibility, no exit.</li>
+              <li>Silent fallback to a weaker model with no trace of the substitution.</li>
+            </ul></div>
+          </div>
+          <div class="codewrap">
+            <div class="codebar"><span class="lang">python</span><span class="file">platform/models/gateway.py</span><button class="copy">Copy</button></div>
+<pre data-lang="python"># Routing policy is configuration. Squads call complete(), never a provider SDK.
+ROUTES = {
+    "restricted": {"model": "gpt-4o-eu",      "region": "westeurope", "fallback": None},
+    "reasoning":  {"model": "claude-sonnet",  "fallback": "gpt-4o"},
+    "standard":   {"model": "gpt-4o",         "fallback": "claude-sonnet"},
+    "bulk":       {"model": "phi-4",          "fallback": "gpt-4o-mini"},
+}
+PRICE = {  # usd per 1M tokens: (input, output)
+    "claude-sonnet": (3.00, 15.00), "gpt-4o": (2.50, 10.00),
+    "gpt-4o-mini": (0.15, 0.60),    "phi-4": (0.07, 0.28),
+}
+
+def meter(model: str, usage) -> float:
+    pin, pout = PRICE[model]
+    return (usage.input_tokens * pin + usage.output_tokens * pout) / 1_000_000
+
+async def complete(*, messages, tier, tenant, agent_id, sensitivity="standard"):
+    route = ROUTES["restricted"] if sensitivity == "restricted" else ROUTES[tier]
+    budget.assert_headroom(tenant, agent_id)          # stop runaway spend early
+    for attempt, model in enumerate([route["model"], route.get("fallback")]):
+        if not model:
+            break
+        try:
+            resp = await provider_call(model, messages, timeout=route.get("timeout", 30))
+        except (RateLimited, Timeout, ProviderDown) as err:
+            emit_event("model.failover", model=model, reason=type(err).__name__)
+            continue
+        cost = meter(model, resp.usage)
+        budget.charge(tenant, agent_id, cost)         # FinOps chargeback at source
+        emit_span("model.call", model=model, degraded=bool(attempt),
+                  tokens=resp.usage.total, cost_usd=cost)
+        return resp
+    raise AllModelsUnavailable(tier)
+</pre>
+          </div>
+        </div>
+
+        <!-- L05 -->
+        <div class="panel" id="L05" role="tabpanel">
+          <p class="panel-kicker">Floor 05</p>
+          <h3>Knowledge &amp; RAG</h3>
+          <p class="panel-lede">Retrieval is a shared service with one non-negotiable property: results are trimmed to what the asking user is already allowed to read. An agent that leaks a document is an access-control incident, not a model problem.</p>
+          <div class="diagram" data-diagram="L05"></div>
+          <div class="facts">
+            <div class="fact pick"><h4>Decisions that hold up</h4><ul>
+              <li>ACLs indexed with the chunk and applied as a query filter, refreshed on source change.</li>
+              <li>Hybrid search plus a reranker — vector-only recall disappoints on enterprise jargon.</li>
+              <li>Groundedness scored per answer; below threshold, the agent declines and escalates.</li>
+            </ul></div>
+            <div class="fact risk"><h4>What goes wrong</h4><ul>
+              <li>One index for all tenants with permissions checked only in the UI.</li>
+              <li>Answering from stale content because nothing tracks source freshness.</li>
+              <li>Citations that point at a document the reader cannot open.</li>
+            </ul></div>
+          </div>
+          <div class="codewrap">
+            <div class="codebar"><span class="lang">python</span><span class="file">platform/knowledge/retrieve.py</span><button class="copy">Copy</button></div>
+<pre data-lang="python"># Retrieval as a service. Security trimming happens in the query, not after it.
+MIN_SCORE = 0.35
+MIN_GROUNDEDNESS = 0.75
+
+def acl_filter(user_upn: str, tenant: str) -> str:
+    principals = identity.groups_for(user_upn) + ["upn:" + user_upn]
+    allowed = ",".join(principals)
+    return "tenant eq '" + tenant + "' and acl/any(g: search.in(g, '" + allowed + "'))"
+
+def retrieve(query: str, user_upn: str, tenant: str, k: int = 8) -> list[dict]:
+    candidates = search.hybrid(
+        query_text=query,                 # BM25 leg: catches product codes and acronyms
+        vector=embed(query),              # semantic leg
+        filter=acl_filter(user_upn, tenant),
+        top=40,
+    )
+    ranked = reranker.rank(query, candidates)[:k]
+    fresh = [c for c in ranked if c.score &gt;= MIN_SCORE and not c.is_expired]
+    emit_span("rag.retrieve", candidates=len(candidates), returned=len(fresh))
+    return fresh
+
+def answer(query: str, ctx) -> AgentReply:
+    chunks = retrieve(query, ctx.user_upn, ctx.tenant)
+    if not chunks:
+        return AgentReply(text="No source you have access to covers this yet.",
+                          needs_human=True)
+    reply = generate(query, chunks)                       # cite-or-abstain prompt
+    score = groundedness(reply.text, chunks)              # claim-level check, 0..1
+    emit_metric("rag.groundedness", score)
+    if score &lt; MIN_GROUNDEDNESS:
+        return AgentReply(text="I could not ground this in approved sources.",
+                          needs_human=True)
+    return reply
+</pre>
+          </div>
+        </div>
+
+        <!-- L06 -->
+        <div class="panel" id="L06" role="tabpanel">
+          <p class="panel-kicker">Floor 06</p>
+          <h3>Data platform</h3>
+          <p class="panel-lede">Fabric or Databricks is the governance spine. Medallion layers feed three assets the factory cannot run without: permission-tagged grounding data, golden evaluation sets, and agent telemetry that closes the improvement loop.</p>
+          <div class="diagram" data-diagram="L06"></div>
+          <div class="facts">
+            <div class="fact pick"><h4>Decisions that hold up</h4><ul>
+              <li>Golden datasets are versioned tables, owned by the business, not files in a repo.</li>
+              <li>Agent traces land in the lakehouse — quality analysis needs SQL, not log search.</li>
+              <li>Catalog-level governance (Unity Catalog / OneLake) is the single permission source.</li>
+            </ul></div>
+            <div class="fact risk"><h4>What goes wrong</h4><ul>
+              <li>Grounding data copied out of the platform, losing its lineage and its ACLs.</li>
+              <li>Evaluation cases living in one engineer's notebook.</li>
+              <li>No feedback path from production outcomes back into the next release.</li>
+            </ul></div>
+          </div>
+          <div class="codewrap">
+            <div class="codebar"><span class="lang">sql</span><span class="file">platform/data/gold_ddl.sql</span><button class="copy">Copy</button></div>
+<pre data-lang="sql">-- Three gold assets every agent factory runs on.
+CREATE CATALOG IF NOT EXISTS ai_factory;
+CREATE SCHEMA  IF NOT EXISTS ai_factory.gold;
+
+-- 1. Grounding: curated, permission-tagged, freshness-aware
+CREATE TABLE ai_factory.gold.knowledge_chunk (
+  chunk_id        STRING NOT NULL,
+  tenant_id       STRING NOT NULL,
+  source_system   STRING,          -- sharepoint | confluence | itsm_kb
+  source_url      STRING,
+  acl             ARRAY&lt;STRING&gt;,   -- group + upn principals, synced from source
+  content         STRING,
+  embedding       ARRAY&lt;FLOAT&gt;,
+  valid_until     DATE,            -- expiry drives the freshness filter at query time
+  ingested_at     TIMESTAMP
+) USING DELTA PARTITIONED BY (tenant_id);
+
+-- 2. Golden evaluation set: the release gate's source of truth
+CREATE TABLE ai_factory.gold.eval_case (
+  case_id      STRING, agent_id STRING,
+  category     STRING,   -- happy | adversarial | refusal | acl_leak | ambiguity
+  prompt       STRING, expected STRING, must_refuse BOOLEAN,
+  as_user      STRING,   -- ACL cases run as a low-privilege identity
+  added_by     STRING, added_at TIMESTAMP
+) USING DELTA;
+
+-- 3. Production telemetry: the improvement loop
+CREATE TABLE ai_factory.gold.agent_trace (
+  trace_id STRING, agent_id STRING, tenant_id STRING, pattern STRING,
+  model STRING, tokens_in BIGINT, tokens_out BIGINT, cost_usd DECIMAL(10,5),
+  groundedness FLOAT, tool_calls INT, escalated BOOLEAN,
+  outcome STRING,       -- resolved | escalated | declined | failed
+  latency_ms INT, ts TIMESTAMP
+) USING DELTA PARTITIONED BY (agent_id);
+
+-- Weekly quality review, straight off the lakehouse
+SELECT agent_id, pattern,
+       COUNT(*)                                        AS runs,
+       AVG(CASE WHEN outcome = 'resolved' THEN 1 ELSE 0 END) AS autonomy_rate,
+       AVG(groundedness)                               AS mean_groundedness,
+       SUM(cost_usd) / SUM(CASE WHEN outcome = 'resolved' THEN 1 ELSE 0 END)
+                                                       AS cost_per_resolution
+FROM   ai_factory.gold.agent_trace
+WHERE  ts &gt;= current_date() - INTERVAL 7 DAYS
+GROUP  BY agent_id, pattern
+ORDER  BY cost_per_resolution DESC;
+</pre>
+          </div>
+        </div>
+
+        <!-- L07 -->
+        <div class="panel" id="L07" role="tabpanel">
+          <p class="panel-kicker">Floor 07</p>
+          <h3>Integration fabric</h3>
+          <p class="panel-lede">Where autonomy stops being a demo. A write-action is a transaction: idempotent, previewable, logged in a ledger, and reversible by a named compensating action.</p>
+          <div class="diagram" data-diagram="L07"></div>
+          <div class="facts">
+            <div class="fact pick"><h4>Decisions that hold up</h4><ul>
+              <li>Idempotency key derived from thread + action + subject — retries never double-execute.</li>
+              <li>Every write declares its compensation at registration time.</li>
+              <li>Dry-run mode is a first-class path, used by evaluations and by approvers.</li>
+            </ul></div>
+            <div class="fact risk"><h4>What goes wrong</h4><ul>
+              <li>A retry loop that raises the same change request eleven times.</li>
+              <li>Partial multi-system updates with nothing to roll them back.</li>
+              <li>Actions executed under a service principal, so the audit trail names a robot.</li>
+            </ul></div>
+          </div>
+          <div class="codewrap">
+            <div class="codebar"><span class="lang">python</span><span class="file">platform/integration/actions.py</span><button class="copy">Copy</button></div>
+<pre data-lang="python">import hashlib
+
+def idempotency_key(thread_id: str, action: str, subject: str) -> str:
+    return hashlib.sha256("|".join([thread_id, action, subject]).encode()).hexdigest()
+
+@action(name="itsm.reset_password",
+        compensates="itsm.revoke_temp_credential",
+        risk="high")
+async def reset_password(req, ctx):
+    key = idempotency_key(ctx.thread_id, "itsm.reset_password", req.user_upn)
+
+    prior = ledger.get(key)
+    if prior and prior.state == "committed":
+        return prior.result                      # replay-safe: same call, same answer
+
+    if ctx.dry_run:                              # evaluations and approvers use this path
+        return Preview("Would reset the password for " + req.user_upn)
+
+    ledger.begin(key, action="itsm.reset_password", actor=ctx.user_upn, payload=req.dict())
+    try:
+        result = await itsm.post("/identity/password/reset",
+                                 json=req.dict(),
+                                 headers=ctx.obo_headers)   # acts AS the user
+    except Exception as err:
+        ledger.fail(key, str(err))
+        await compensate(key, ctx)               # unwind anything already applied
+        raise
+    ledger.commit(key, result)
+    emit_event("action.committed", action="itsm.reset_password",
+               actor=ctx.user_upn, trace_id=ctx.trace_id)
+    return result
+</pre>
+          </div>
+        </div>
+
+        <!-- S01 -->
+        <div class="panel spine" id="S01" role="tabpanel">
+          <p class="panel-kicker">Spine 01</p>
+          <h3>Security &amp; identity</h3>
+          <p class="panel-lede">The agent acts as the person who asked, never as itself. Everything else — injection screening, secrets, isolation — follows from getting delegation right on day one, because retrofitting it means rebuilding every tool.</p>
+          <div class="diagram" data-diagram="S01"></div>
+          <div class="facts">
+            <div class="fact pick"><h4>Decisions that hold up</h4><ul>
+              <li>On-behalf-of token exchange with federated workload identity — no stored secrets.</li>
+              <li>Treat retrieved content as data: screen it for instruction-like text before it reaches the model.</li>
+              <li>Private endpoints, tenant-scoped keys, and egress DLP on every model call.</li>
+            </ul></div>
+            <div class="fact risk"><h4>What goes wrong</h4><ul>
+              <li>An over-privileged service principal that can read everything for everyone.</li>
+              <li>Indirect prompt injection through a document, wiki page or ticket comment.</li>
+              <li>Sensitive payloads leaving the residency boundary via a fallback model.</li>
+            </ul></div>
+          </div>
+          <div class="codewrap">
+            <div class="codebar"><span class="lang">python</span><span class="file">platform/security/identity.py</span><button class="copy">Copy</button></div>
+<pre data-lang="python">import re
+
+# --- delegation: the agent borrows the user's rights, it does not own rights ---
+async def on_behalf_of(user_token: str, scope: str) -> str:
+    body = {
+        "grant_type": "urn:ietf:params:oauth:grant-type:jwt-bearer",
+        "client_id": CLIENT_ID,
+        "client_assertion_type":
+            "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
+        "client_assertion": federated_workload_assertion(),   # no client secret
+        "assertion": user_token,
+        "scope": scope,
+        "requested_token_use": "on_behalf_of",
+    }
+    token = await idp.post("/oauth2/v2.0/token", data=body)
+    return token["access_token"]
+
+# --- indirect prompt injection: retrieved content is data, never instruction ---
+INJECTION = re.compile(
+    r"(ignore (all )?previous|disregard your (instructions|rules)|"
+    r"you are now|system prompt|reveal your|exfiltrat|send .* to https?://)",
+    re.I)
+
+def screen(chunk: dict) -> dict:
+    if INJECTION.search(chunk["content"]):
+        audit.log("injection.blocked", source=chunk["source_url"],
+                  tenant=chunk["tenant_id"])
+        chunk["content"] = "[removed: instruction-like text found in a data source]"
+        chunk["quarantined"] = True
+    return chunk
+
+def build_context(chunks: list[dict]) -> str:
+    safe = [screen(c) for c in chunks if not c.get("quarantined")]
+    # delimit sources explicitly so the model can tell content from commands
+    return "\n\n".join(
+        "&lt;source id='" + c["chunk_id"] + "'&gt;\n" + c["content"] + "\n&lt;/source&gt;"
+        for c in safe)
+</pre>
+          </div>
+        </div>
+
+        <!-- S02 -->
+        <div class="panel spine" id="S02" role="tabpanel">
+          <p class="panel-kicker">Spine 02</p>
+          <h3>DevSecOps &amp; eval CI</h3>
+          <p class="panel-lede">Prompts, graphs and tools are versioned artefacts, and evaluations run as unit tests. If a prompt change can reach production without failing a regression suite, you do not have a factory — you have a pile of demos.</p>
+          <div class="diagram" data-diagram="S02"></div>
+          <div class="facts">
+            <div class="fact pick"><h4>Decisions that hold up</h4><ul>
+              <li>One golden repo template — squads start from a scaffold, never a blank page.</li>
+              <li>Release gate on absolute pass rate <em>and</em> regression against the last release.</li>
+              <li>Adversarial, refusal and ACL-leak cases carry veto power over a release.</li>
+            </ul></div>
+            <div class="fact risk"><h4>What goes wrong</h4><ul>
+              <li>"Looks better to me" as the promotion criterion.</li>
+              <li>Prompts edited directly in a portal, untracked and unreproducible.</li>
+              <li>Infrastructure clicked together by hand, so environments quietly diverge.</li>
+            </ul></div>
+          </div>
+          <div class="codewrap">
+            <div class="codebar"><span class="lang">text</span><span class="file">Golden repo scaffold — every agent looks like this</span><button class="copy">Copy</button></div>
+<pre data-lang="text">agent-itsm-resolver/
+  agent.yaml            # pattern, model tier, tools, risk tier, owner, budgets
+  prompts/              # versioned; reviewed like source code
+    system.md
+    plan.md
+  graph/                # orchestration nodes, imported from platform patterns
+  evals/
+    golden.jsonl        # 60+ cases: happy, adversarial, refusal, acl_leak, ambiguity
+    test_evals.py
+  infra/main.tf         # terraform only. no clickops.
+  .github/workflows/release.yml
+</pre>
+          </div>
+          <div class="codewrap">
+            <div class="codebar"><span class="lang">yaml</span><span class="file">.github/workflows/release.yml</span><button class="copy">Copy</button></div>
+<pre data-lang="yaml">name: agent-release
+on: [pull_request, workflow_dispatch]
+
+jobs:
+  quality-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Static and secret scan
+        run: |
+          ruff check . && bandit -q -r src/
+          gitleaks detect --no-banner
+
+      - name: Validate agent manifest
+        run: python -m platform.cli validate agent.yaml   # owner, risk tier, budgets
+
+      - name: Run evaluation suite
+        env:
+          MODEL_GATEWAY_URL: ${{ vars.MODEL_GATEWAY_URL }}
+        run: pytest evals/ --json-report --json-report-file=evals/result.json
+
+      - name: Enforce release thresholds
+        run: |
+          python -m platform.cli gate evals/result.json \
+            --min-pass 0.92 \
+            --max-regression 0.02 \
+            --zero-tolerance acl_leak,refusal \
+            --max-cost-per-case 0.04
+
+      - name: Red-team probe suite
+        run: python -m platform.redteam run --suite injection,jailbreak,pii
+
+      - name: Register release
+        if: github.ref == 'refs/heads/main'
+        run: python -m platform.cli register --bump minor --sign
+</pre>
+          </div>
+          <div class="codewrap">
+            <div class="codebar"><span class="lang">python</span><span class="file">evals/test_evals.py</span><button class="copy">Copy</button></div>
+<pre data-lang="python">import json, pytest
+
+CASES = [json.loads(line) for line in open("evals/golden.jsonl")]
+
+@pytest.mark.parametrize("case", CASES, ids=[c["case_id"] for c in CASES])
+def test_case(case, agent):
+    reply = agent.run(case["prompt"], as_user=case.get("as_user", "test.user@corp"))
+
+    if case["category"] == "acl_leak":
+        assert not contains_any(reply.text, case["forbidden_strings"]), \
+            "leaked content the test identity cannot access"
+
+    if case.get("must_refuse"):
+        assert reply.needs_human or is_refusal(reply.text)
+        return
+
+    assert semantic_match(reply.text, case["expected"]) &gt;= 0.80
+    assert groundedness(reply.text, reply.citations) &gt;= 0.75
+    assert reply.cost_usd &lt;= 0.04
+</pre>
+          </div>
+        </div>
+
+        <!-- S03 -->
+        <div class="panel spine" id="S03" role="tabpanel">
+          <p class="panel-kicker">Spine 03</p>
+          <h3>Observability &amp; FinOps</h3>
+          <p class="panel-lede">Three telemetry planes, one trace. Cost tells you whether the agent is viable, quality tells you whether it is working, and safety tells you whether it is behaving. Instrument all three from the first use case.</p>
+          <div class="diagram" data-diagram="S03"></div>
+          <div class="facts">
+            <div class="fact pick"><h4>Decisions that hold up</h4><ul>
+              <li>OpenTelemetry GenAI conventions — spans for prompts, retrievals, tool calls, handoffs.</li>
+              <li>Cost tagged by tenant, agent and pattern so chargeback is arithmetic, not a project.</li>
+              <li>Quality signals streamed to the lakehouse, then reviewed weekly by the owner.</li>
+            </ul></div>
+            <div class="fact risk"><h4>What goes wrong</h4><ul>
+              <li>A single monthly provider invoice with no idea which agent spent it.</li>
+              <li>Logging final answers only — the failure is almost always mid-trace.</li>
+              <li>Capturing raw prompts with customer data and no redaction policy.</li>
+            </ul></div>
+          </div>
+          <div class="codewrap">
+            <div class="codebar"><span class="lang">python</span><span class="file">platform/observability/telemetry.py</span><button class="copy">Copy</button></div>
+<pre data-lang="python">from opentelemetry import trace, metrics
+from contextlib import contextmanager
+
+tracer = trace.get_tracer("ai.factory")
+meter  = metrics.get_meter("ai.factory")
+
+cost_counter  = meter.create_counter("gen_ai.client.cost", unit="usd")
+token_hist    = meter.create_histogram("gen_ai.client.token.usage", unit="token")
+ground_hist   = meter.create_histogram("agent.groundedness")
+escalations   = meter.create_counter("agent.escalation")
+
+@contextmanager
+def agent_run(agent_id: str, pattern: str, tenant: str, thread_id: str):
+    with tracer.start_as_current_span("agent.run") as span:
+        span.set_attributes({
+            "agent.id": agent_id, "agent.pattern": pattern,
+            "enduser.tenant": tenant, "session.id": thread_id,
+        })
+        yield span
+
+def record_model_call(model: str, usage, cost: float, tenant: str, agent_id: str):
+    dims = {"gen_ai.request.model": model, "enduser.tenant": tenant, "agent.id": agent_id}
+    cost_counter.add(cost, dims)
+    token_hist.record(usage.input_tokens,  dict(dims, direction="input"))
+    token_hist.record(usage.output_tokens, dict(dims, direction="output"))
+    span = trace.get_current_span()
+    span.set_attributes({"gen_ai.usage.input_tokens": usage.input_tokens,
+                         "gen_ai.usage.output_tokens": usage.output_tokens,
+                         "gen_ai.cost.usd": cost})
+
+def record_outcome(agent_id: str, outcome: str, groundedness: float | None):
+    if groundedness is not None:
+        ground_hist.record(groundedness, {"agent.id": agent_id})
+    if outcome == "escalated":
+        escalations.add(1, {"agent.id": agent_id})
+    # redact before persisting: prompts may carry customer identifiers
+    sink.write(redact(current_trace_payload()))
+</pre>
+          </div>
+        </div>
+
+        <!-- S04 -->
+        <div class="panel spine" id="S04" role="tabpanel">
+          <p class="panel-kicker">Spine 04</p>
+          <h3>Responsible AI &amp; governance</h3>
+          <p class="panel-lede">Risk is classified at intake, not discovered at go-live. The manifest a squad writes on day one becomes the machine-readable contract that the release gate enforces on every deployment after it.</p>
+          <div class="diagram" data-diagram="S04"></div>
+          <div class="facts">
+            <div class="fact pick"><h4>Decisions that hold up</h4><ul>
+              <li>Risk tier assigned at intake, aligned to EU AI Act categories, and it drives controls.</li>
+              <li>Named accountable owner per agent — no anonymous production agents, ever.</li>
+              <li>Oversight designed to the tier: advisory, approval-gated, or dual-control.</li>
+            </ul></div>
+            <div class="fact risk"><h4>What goes wrong</h4><ul>
+              <li>Governance as a review meeting rather than a gate the pipeline can fail.</li>
+              <li>Human oversight that is really rubber-stamping, with no time or context to judge.</li>
+              <li>An agent with no owner, quietly answering customers for eleven months.</li>
+            </ul></div>
+          </div>
+          <div class="codewrap">
+            <div class="codebar"><span class="lang">yaml</span><span class="file">agent.yaml — the manifest the gate enforces</span><button class="copy">Copy</button></div>
+<pre data-lang="yaml">apiVersion: factory/v1
+kind: Agent
+metadata:
+  id: itsm-resolver
+  owner: pawan.maheshwari            # accountable human, not a distribution list
+  business_owner: service-desk-lead
+  pattern: itsm-resolver             # from the platform pattern library
+spec:
+  risk_tier: high                    # minimal | limited | high | unacceptable
+  rationale: >
+    Acts on identity and access records for employees. Human impact on
+    access rights, so oversight is mandatory before any write.
+  data_classes: [internal, personal_data]
+  residency: in-central
+  model:
+    tier: reasoning
+    sensitivity: standard
+  autonomy:
+    read: autonomous
+    write: approval_required         # maps to the interrupt in the graph
+    dual_control: [identity.reset, entitlement.grant]
+  oversight:
+    reviewer_group: service-desk-approvers
+    sla_minutes: 15
+    escalation: on_timeout_decline   # never auto-approve on timeout
+  controls:
+    groundedness_min: 0.75
+    refusal_topics: [payroll, legal_advice, termination]
+    retention_days: 90
+    red_team_suites: [injection, jailbreak, pii]
+  evaluation:
+    golden_set: ai_factory.gold.eval_case
+    min_pass_rate: 0.92
+    zero_tolerance: [acl_leak, refusal]
+  review:
+    cadence: quarterly
+    last_reviewed: 2026-07-14
+</pre>
+          </div>
+          <div class="codewrap">
+            <div class="codebar"><span class="lang">python</span><span class="file">platform/governance/gate.py</span><button class="copy">Copy</button></div>
+<pre data-lang="python">REQUIRED_BY_TIER = {
+    "minimal": {"owner"},
+    "limited": {"owner", "evaluation", "retention_days"},
+    "high": {"owner", "evaluation", "retention_days", "oversight",
+             "red_team_suites", "dual_control", "rationale"},
+}
+
+def gate(manifest: dict, eval_result: dict, redteam: dict) -> None:
+    tier = manifest["spec"]["risk_tier"]
+    if tier == "unacceptable":
+        raise Blocked("use case is out of policy — refer to the AI council")
+
+    missing = REQUIRED_BY_TIER[tier] - present_fields(manifest)
+    if missing:
+        raise Blocked("manifest incomplete for tier " + tier + ": " + ", ".join(missing))
+
+    if eval_result["pass_rate"] &lt; manifest["spec"]["evaluation"]["min_pass_rate"]:
+        raise Blocked("evaluation pass rate below the declared threshold")
+
+    for category in manifest["spec"]["evaluation"]["zero_tolerance"]:
+        if eval_result["failures_by_category"].get(category, 0) &gt; 0:
+            raise Blocked("zero-tolerance failure in " + category)
+
+    if tier == "high" and redteam["critical_findings"] &gt; 0:
+        raise Blocked("unresolved critical red-team findings")
+
+    if stale(manifest["spec"]["review"]["last_reviewed"], days=120):
+        raise Blocked("periodic review overdue — reapprove before release")
+
+    registry.record(manifest, eval_result, signed_by=ci_identity())
+</pre>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="patterns">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num">03</span><h2>Pattern library</h2></div>
+    <p class="sec-lede">A squad picks a blueprint, not a blank page. Each pattern ships as a reference implementation, an evaluation suite, a guardrail configuration and a cost model — so estimating a new agent becomes arithmetic instead of guesswork.</p>
+    <div class="cards">
+      <div class="card"><span class="pid">P01</span><h4>Grounded answering</h4><p>Cited answers over governed knowledge, with abstention when nothing grounds the claim.</p><div class="chips"><span class="chip">RAG</span><span class="chip">read-only</span><span class="chip">low risk</span></div></div>
+      <div class="card"><span class="pid">P02</span><h4>Service resolver</h4><p>Classify, diagnose, resolve or route an incident end to end, with approval before any write.</p><div class="chips"><span class="chip">ITSM</span><span class="chip">write</span><span class="chip">HITL</span></div></div>
+      <div class="card"><span class="pid">P03</span><h4>Document processing</h4><p>Extract, validate and post structured data from unstructured documents, with confidence routing.</p><div class="chips"><span class="chip">IDP</span><span class="chip">batch</span><span class="chip">schema</span></div></div>
+      <div class="card"><span class="pid">P04</span><h4>Process orchestrator</h4><p>Long-running workflows across systems, durable state, compensations, resumable after days.</p><div class="chips"><span class="chip">multi-system</span><span class="chip">durable</span></div></div>
+      <div class="card"><span class="pid">P05</span><h4>Data analyst</h4><p>Natural language to governed SQL over the lakehouse, executed under the asker's permissions.</p><div class="chips"><span class="chip">text-to-SQL</span><span class="chip">Unity Catalog</span></div></div>
+      <div class="card"><span class="pid">P06</span><h4>Research synthesiser</h4><p>Parallel workers gather, a supervisor reconciles conflicts and reports what is disputed.</p><div class="chips"><span class="chip">multi-agent</span><span class="chip">long-context</span></div></div>
+      <div class="card"><span class="pid">P07</span><h4>Engineering copilot</h4><p>Repository-aware change proposals that raise a pull request; a human still merges.</p><div class="chips"><span class="chip">SDLC</span><span class="chip">sandboxed</span></div></div>
+    </div>
+  </div>
+</section>
+
+<section id="gates">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num">04</span><h2>Governance path</h2></div>
+    <p class="sec-lede">Five gates between an idea and production. Each one produces a recorded verdict against the agent manifest, so governance runs at the speed of the pipeline rather than the speed of a monthly forum.</p>
+    <div class="gates">
+      <div class="gate"><span class="g">Gate 01</span><h4>Intake</h4><p>Value case, data classes, affected people, and the human decision the agent is touching.</p><p class="verdict">Verdict &mdash; proceed / reshape / decline</p></div>
+      <div class="gate"><span class="g">Gate 02</span><h4>Risk tier</h4><p>Classification against the policy taxonomy. The tier selects the controls, not the other way round.</p><p class="verdict">Verdict &mdash; tier assigned</p></div>
+      <div class="gate"><span class="g">Gate 03</span><h4>Architecture</h4><p>Pattern chosen, reuse checked against the registry, deviations justified in writing.</p><p class="verdict">Verdict &mdash; pattern locked</p></div>
+      <div class="gate"><span class="g">Gate 04</span><h4>Readiness</h4><p>Evaluations, red-team results, oversight design, rollback plan and cost per task.</p><p class="verdict">Verdict &mdash; release / remediate</p></div>
+      <div class="gate"><span class="g">Gate 05</span><h4>In-life review</h4><p>Quarterly reconfirmation of owner, drift, cost and outcomes. Silence retires the agent.</p><p class="verdict">Verdict &mdash; continue / retire</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="roadmap">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num">05</span><h2>Phased industrialisation</h2></div>
+    <p class="sec-lede">The platform is extracted from real use cases, never speculated ahead of them. Building the full factory before the first agent ships is the most reliable way to produce an expensive centre of excellence that never delivers.</p>
+    <div class="phases">
+      <div class="phase">
+        <div class="phase-when"><b>0&ndash;3</b>months &middot; Phase 1</div>
+        <div class="phase-body"><h4>Prove</h4><p>One squad, two lighthouse use cases with a named business owner. Build only the thin platform they cannot work without: model gateway, retrieval service, evaluation harness, tracing.</p></div>
+        <div class="phase-exit"><h5>Exit when</h5>Two agents live with measured outcomes, and an evaluation suite fails a bad change.</div>
+      </div>
+      <div class="phase">
+        <div class="phase-when"><b>3&ndash;9</b>months &middot; Phase 2</div>
+        <div class="phase-body"><h4>Platformise</h4><p>Extract the reusables you actually used. Publish the tool registry, the first three patterns, the golden repo scaffold and the intake process. Onboard three to five squads onto the paved road.</p></div>
+        <div class="phase-exit"><h5>Exit when</h5>A new agent reaches production without the platform team writing its code.</div>
+      </div>
+      <div class="phase">
+        <div class="phase-when"><b>9&ndash;18</b>months &middot; Phase 3</div>
+        <div class="phase-body"><h4>Scale</h4><p>Federated delivery across business units. Self-service scaffolding, automated governance gates, chargeback by tenant and agent, and an SRE model with on-call ownership for production agents.</p></div>
+        <div class="phase-exit"><h5>Exit when</h5>Reuse exceeds 60% per new agent and unit cost per task is trending down.</div>
+      </div>
+      <div class="phase">
+        <div class="phase-when"><b>18</b>months + &middot; Phase 4</div>
+        <div class="phase-body"><h4>Compose</h4><p>Agents call agents through published contracts. Dynamic composition against the registry, continuous improvement from production telemetry, and portfolio-level capacity and risk management.</p></div>
+        <div class="phase-exit"><h5>Exit when</h5>Composition is routine and the registry, not a person, is the map of what exists.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="metrics">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num">06</span><h2>Proof the factory works</h2></div>
+    <p class="sec-lede">Count what a factory should improve: speed to build, share of reuse, and unit economics. Anything an individual project could claim on its own is not evidence of industrialisation.</p>
+    <div class="kpis">
+      <div class="kpi"><span>Speed</span><b>Time to first agent</b><p>Intake to production for a standard pattern. Weeks to days is the trajectory.</p></div>
+      <div class="kpi"><span>Reuse</span><b>Platform share</b><p>Percentage of an agent composed of registered platform components.</p></div>
+      <div class="kpi"><span>Economics</span><b>Cost per completed task</b><p>Fully loaded and trending down as routing and caching mature.</p></div>
+      <div class="kpi"><span>Quality</span><b>Autonomous completion</b><p>Resolved without a human, split against the escalation rate.</p></div>
+      <div class="kpi"><span>Assurance</span><b>Release pass rate</b><p>Evaluation results at the gate, plus regression against the last release.</p></div>
+      <div class="kpi"><span>Control</span><b>Registered agents</b><p>Share of production agents with an owner, a tier and a current review.</p></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span class="mono">AGENTIC AI FACTORY &middot; REFERENCE ARCHITECTURE v1</span>
+    <span class="mono">Extract the platform from delivery. Never the reverse.</span>
+  </div>
+</footer>
+
+<script>
+(function(){
+  // ---------- layer explorer ----------
+  var tabs = document.querySelectorAll('.floor');
+  var panels = document.querySelectorAll('.panel');
+  function select(id){
+    tabs.forEach(function(t){
+      var on = t.dataset.target === id;
+      t.classList.toggle('is-active', on);
+      t.setAttribute('aria-selected', on ? 'true' : 'false');
+    });
+    panels.forEach(function(p){ p.classList.toggle('is-active', p.id === id); });
+    litPlan(id);
+  }
+  tabs.forEach(function(t, i){
+    t.addEventListener('click', function(){ select(t.dataset.target); });
+    t.addEventListener('keydown', function(e){
+      var next = e.key === 'ArrowDown' || e.key === 'ArrowRight' ? 1
+               : e.key === 'ArrowUp'   || e.key === 'ArrowLeft'  ? -1 : 0;
+      if(!next) return;
+      e.preventDefault();
+      var target = tabs[(i + next + tabs.length) % tabs.length];
+      target.focus(); select(target.dataset.target);
+    });
+  });
+
+  // ---------- floor plan ----------
+  var blocks = document.querySelectorAll('[data-goto]');
+  blocks.forEach(function(b){
+    b.addEventListener('click', function(){
+      select(b.dataset.goto);
+      document.getElementById('stack').scrollIntoView({block:'start'});
+    });
+  });
+  function litPlan(id){
+    blocks.forEach(function(b){ b.classList.toggle('is-lit', b.dataset.goto === id); });
+  }
+
+  // ---------- layer schematics ----------
+  var D = {
+    L01: {cap:'Request path — one contract, many front doors', stages:[
+      {nodes:[
+        {t:'Teams', k:'ext', n:'Bot framework payload. Adaptive cards on the way back.'},
+        {t:'ITSM portal', k:'ext', n:'Ticket create or update webhook, with the caller identity attached.'},
+        {t:'Web / voice', k:'ext', n:'Browser widget or telephony. Voice adds transcription in, SSML out.'},
+        {t:'API', k:'ext', n:'System-to-system calls from other applications and agents.'}]},
+      {nodes:[{t:'Channel adapter', n:'The only place channel-specific parsing is allowed to exist. One adapter per front door.'}]},
+      {nodes:[{t:'AgentRequest', k:'gate', n:'tenant, user_upn, utterance, thread_id, user_token. Nothing downstream knows which channel produced it.'}]},
+      {nodes:[{t:'Orchestrator', k:'ghost', n:'Floor 02. Receives an identical request whichever door it came through.'}]},
+      {nodes:[{t:'AgentReply', k:'gate', n:'Text, citations, actions taken, escalation flag, trace id and cost. Uniform, so evaluation can compare any two runs.'}]},
+      {nodes:[{t:'Renderer', n:'Formatting chosen at the last moment: adaptive card, ticket work note, SSML or plain JSON.'}]}
+    ], rail:[{t:'Session store', n:'Maps a channel conversation to a durable thread_id so context survives across turns.'}]},
+
+    L02: {cap:'Graph topology — routed, budgeted, interruptible', stages:[
+      {nodes:[{t:'Intake + classify', n:'Intent, entities and an initial risk read. Cheap model tier — this is not a reasoning task.'}]},
+      {nodes:[{t:'Supervisor', n:'Routes to one worker, counts steps and terminates when the budget is spent.'}]},
+      {nodes:[
+        {t:'Knowledge worker', n:'Read-only path. Retrieves, grounds, cites, and ends without touching a system.'},
+        {t:'Triage worker', n:'Gathers diagnostics, then returns to the supervisor for a second routing decision.'},
+        {t:'Action planner', n:'Proposes concrete tool calls with arguments. Proposes only — it never executes.'}]},
+      {nodes:[{t:'Approval gate', k:'gate', n:'A real interrupt in the graph. Execution pauses, state persists, and resumes on the approver verdict.'}]},
+      {nodes:[{t:'Action executor', n:'Calls registered tools through the runtime. Every call is authorised before it runs.'}]},
+      {nodes:[{t:'Reply / escalate', n:'One terminal node so every path produces the same reply shape.'}]}
+    ], rail:[
+      {t:'Checkpointer (Postgres)', n:'Durable state per thread. Runs survive restarts, can be replayed, and are auditable after the fact.'},
+      {t:'Step budget', n:'Hard ceiling on iterations. Without it, a confused agent bills you until someone notices.'}]},
+
+    L03: {cap:'Tool invocation — registered once, governed on every call', stages:[
+      {nodes:[{t:'Agent tool request', n:'The agent names a tool and arguments. It has no direct network path to anything.'}]},
+      {nodes:[{t:'Policy engine', k:'gate', n:'Entitlement, scopes, risk class, approval state and call budget — all checked before execution, never after.'}]},
+      {nodes:[{t:'Tool registry', n:'Versioned catalogue with owner, risk class and allowed agents. Reuse is measured against this.'}]},
+      {nodes:[
+        {t:'MCP: ITSM', k:'ext', n:'Incident, request and change operations. Published once, consumed by every relevant agent.'},
+        {t:'MCP: identity', k:'ext', n:'Account, group and entitlement operations. High risk, so dual control applies.'},
+        {t:'MCP: knowledge', k:'ext', n:'Search over governed content. Read-only and available to all patterns.'}]},
+      {nodes:[{t:'Result + span', n:'Normalised result plus a trace span carrying the tool name, version and latency.'}]}
+    ], rail:[
+      {t:'Short-term memory', n:'Working state for the current thread. Expires with the conversation.'},
+      {t:'Long-term memory', n:'Durable preferences and prior resolutions, partitioned by tenant and user.'},
+      {t:'Prompt registry', n:'Versioned system and task prompts, resolved at runtime rather than baked into code.'}]},
+
+    L04: {cap:'Model routing — sensitivity first, cost second', stages:[
+      {nodes:[{t:'Completion request', n:'Messages plus tier, tenant, agent id and data sensitivity. No provider named by the caller.'}]},
+      {nodes:[{t:'Sensitivity check', k:'gate', n:'Restricted data pins the route to an in-region model. Residency wins over price, always.'}]},
+      {nodes:[{t:'Router + budget', n:'Selects model by tier, then asserts the tenant and agent still have spend headroom.'}]},
+      {nodes:[
+        {t:'Frontier model', k:'ext', n:'Reasoning tier: planning, ambiguity, multi-step judgement.'},
+        {t:'Mid model', k:'ext', n:'Standard tier: drafting and grounded answering. The workhorse.'},
+        {t:'Small / open model', k:'ext', n:'Bulk tier: classification, extraction, routing. A fraction of the cost.'}]},
+      {nodes:[{t:'Failover', k:'gate', n:'On rate limit or outage, fall back once — and record the degradation on the trace.'}]},
+      {nodes:[{t:'Meter + charge', n:'Price the usage, charge the tenant and agent, emit the span. This is where FinOps becomes arithmetic.'}]}
+    ], rail:[
+      {t:'Semantic cache', n:'Repeated questions answered without a model call. Often the single largest cost saving.'},
+      {t:'Content safety', n:'Input and output screening applied centrally, so no squad can forget it.'}]},
+
+    L05: {cap:'Retrieval — trimmed to what the asker may already read', stages:[
+      {nodes:[
+        {t:'SharePoint', k:'ext', n:'Permissions read at ingest and refreshed on change, then indexed with the chunk.'},
+        {t:'Confluence / wiki', k:'ext', n:'Space and page restrictions carried through as principals on the chunk.'},
+        {t:'Knowledge base', k:'ext', n:'Curated articles. Usually the highest-precision source, so it is weighted up.'}]},
+      {nodes:[{t:'Ingest + chunk', n:'Structure-aware splitting. Headings and tables survive; a chunk keeps its source URL and expiry.'}]},
+      {nodes:[{t:'Embed + index', n:'Vectors and keywords written together with tenant id and the ACL principal list.'}]},
+      {nodes:[{t:'Hybrid retrieve', n:'Keyword leg catches product codes and acronyms; vector leg catches meaning. You need both.'}]},
+      {nodes:[{t:'ACL filter', k:'gate', n:'Applied inside the query, not after it. This is the control that stops an agent becoming a data leak.'}]},
+      {nodes:[{t:'Rerank', n:'Cross-encoder reorders the shortlist. The cheapest quality gain available in RAG.'}]},
+      {nodes:[{t:'Ground + cite', k:'gate', n:'Score claims against retrieved text. Below threshold the agent declines rather than guesses.'}]}
+    ], rail:[
+      {t:'Freshness job', n:'Expires stale chunks and re-syncs permissions. Unmaintained indexes answer confidently from last year.'},
+      {t:'Citation resolver', n:'Rewrites source links so the reader opens a document they can actually access.'}]},
+
+    L06: {cap:'Lakehouse — three assets the factory runs on', stages:[
+      {nodes:[
+        {t:'Source systems', k:'ext', n:'ITSM, CRM, ERP, HR, document stores. Landed, not copied ad hoc by each project.'},
+        {t:'Agent telemetry', k:'ext', n:'Traces streamed from the observability spine into the same platform as the business data.'}]},
+      {nodes:[{t:'Bronze', n:'Raw landing with lineage intact. Nothing is edited here.'}]},
+      {nodes:[{t:'Silver', n:'Conformed, deduplicated, quality-checked. Permissions normalised to platform principals.'}]},
+      {nodes:[
+        {t:'gold.knowledge_chunk', n:'Permission-tagged, expiry-aware grounding data. The index is built from this, not from a file share.'},
+        {t:'gold.eval_case', n:'Golden evaluation cases as a governed table, owned by the business rather than an engineer.'},
+        {t:'gold.agent_trace', n:'Every run: cost, groundedness, tool calls, outcome. Quality analysis needs SQL, not log search.'}]},
+      {nodes:[
+        {t:'Search index', k:'ext', n:'Built from gold. Rebuildable at any time because the source of truth is the table.'},
+        {t:'CI eval gate', k:'ext', n:'Reads the golden set at release time, so tests and data never drift apart.'},
+        {t:'Quality review', k:'ext', n:'Weekly owner review off agent_trace: autonomy rate, cost per resolution, drift.'}]}
+    ], rail:[
+      {t:'Unity Catalog / OneLake', n:'One permission model across data, features and agent telemetry. The governance spine of the platform.'},
+      {t:'Lineage + retention', n:'Where a grounded answer came from, and when its underlying record must be deleted.'}]},
+
+    L07: {cap:'Write-actions — transactions, not tool calls', stages:[
+      {nodes:[{t:'Approved action', n:'Arrives with the approver verdict and the acting user already attached.'}]},
+      {nodes:[{t:'Idempotency key', k:'gate', n:'Hash of thread, action and subject. A retry returns the first result instead of executing twice.'}]},
+      {nodes:[{t:'Dry run?', k:'gate', n:'Evaluations and approvers use the preview path. It exercises the same code without side effects.'}]},
+      {nodes:[{t:'Ledger begin', n:'Records intent, actor and payload before anything external is touched.'}]},
+      {nodes:[{t:'API gateway', n:'Central policy, throttling and audit. No agent holds a direct endpoint or credential.'}]},
+      {nodes:[
+        {t:'ITSM', k:'ext', n:'Incidents, requests, changes.'},
+        {t:'Identity', k:'ext', n:'Accounts, groups, entitlements. Executed as the user, not as a service principal.'},
+        {t:'Line of business', k:'ext', n:'ERP, HR, finance. Usually the systems with the least tolerance for a bad write.'}]},
+      {nodes:[{t:'Commit / compensate', k:'gate', n:'Success commits the ledger entry. Failure triggers the compensation declared when the tool was registered.'}]}
+    ], rail:[
+      {t:'Event bus', n:'Emits action events so downstream systems react without the agent orchestrating them.'},
+      {t:'Action ledger', n:'The audit answer to what an agent did, when, on whose authority, and whether it was reversed.'}]},
+
+    S01: {cap:'Delegation — the agent borrows rights, it never owns them', stages:[
+      {nodes:[{t:'User token', n:'Carried from the channel. The chain of custody starts at the person who asked.'}]},
+      {nodes:[{t:'Workload identity', n:'Federated credential for the agent runtime. No client secret is stored anywhere.'}]},
+      {nodes:[{t:'On-behalf-of exchange', k:'gate', n:'Trades the user token for a scoped downstream token. The agent can never exceed the user.'}]},
+      {nodes:[{t:'Scoped token', n:'Least privilege, short lived, audience-bound to one system.'}]},
+      {nodes:[{t:'Injection screen', k:'gate', n:'Retrieved content is data, not instruction. Instruction-like text is quarantined before it reaches the model.'}]},
+      {nodes:[{t:'Tool call as user', n:'The target system logs the person, not a robot. Audit and access review keep working.'}]}
+    ], rail:[
+      {t:'Key Vault + private endpoints', n:'Secrets managed, traffic off the public internet, tenant-scoped keys.'},
+      {t:'Egress DLP', n:'Screens what leaves for a model provider, and blocks payloads crossing the residency boundary.'},
+      {t:'Audit sink', n:'Immutable record of authorisations, blocks and approvals, retained to the declared policy.'}]},
+
+    S02: {cap:'Release pipeline — evaluations are the gate', stages:[
+      {nodes:[{t:'Commit', n:'Prompts, graph, tools, manifest and infrastructure all versioned in one repository.'}]},
+      {nodes:[{t:'Scan', n:'Lint, dependency, secret and static analysis. Ordinary engineering hygiene, applied to agents.'}]},
+      {nodes:[{t:'Manifest validation', k:'gate', n:'Owner, risk tier, budgets and controls must be present and well formed before anything else runs.'}]},
+      {nodes:[{t:'Evaluation suite', n:'Golden set run as tests: happy path, adversarial, refusal, ACL leak, ambiguity.'}]},
+      {nodes:[{t:'Threshold gate', k:'gate', n:'Absolute pass rate, regression against the last release, zero-tolerance categories and cost per case.'}]},
+      {nodes:[{t:'Red team', n:'Injection, jailbreak and PII probe suites. Required for high-tier agents on every release.'}]},
+      {nodes:[{t:'Signed release', n:'Registered in the agent registry with its evaluation evidence attached.'}]}
+    ], rail:[
+      {t:'Golden scaffold', n:'The repository template every squad starts from. Nobody begins with a blank page.'},
+      {t:'Terraform', n:'Environments built from code, so dev, test and production cannot quietly diverge.'}]},
+
+    S03: {cap:'One trace, three planes', stages:[
+      {nodes:[{t:'agent.run span', n:'Root span carrying agent id, pattern, tenant and session. Everything else hangs off it.'}]},
+      {nodes:[
+        {t:'model.call', n:'Model, tokens, cost, latency and whether a fallback was used.'},
+        {t:'rag.retrieve', n:'Candidates, returned chunks, filter applied and groundedness of the resulting answer.'},
+        {t:'tool.call', n:'Tool name, version, authorisation result and outcome.'}]},
+      {nodes:[{t:'Redaction', k:'gate', n:'Prompts and payloads scrubbed of customer identifiers before anything is persisted.'}]},
+      {nodes:[{t:'OTel collector', n:'One pipeline, standard GenAI conventions, so tooling choices stay reversible.'}]},
+      {nodes:[
+        {t:'Cost plane', n:'Spend per tenant, agent and pattern. Answers whether the agent is economically viable.'},
+        {t:'Quality plane', n:'Groundedness, task success, escalation rate. Answers whether it is working.'},
+        {t:'Safety plane', n:'Refusals, blocked injections, policy denials. Answers whether it is behaving.'}]}
+    ], rail:[
+      {t:'Lakehouse sink', n:'Traces land in gold.agent_trace so weekly review is a SQL query, not an investigation.'},
+      {t:'Alerting', n:'Thresholds on cost per task, groundedness drop and escalation spikes, routed to the named owner.'}]},
+
+    S04: {cap:'Governance as a pipeline, not a meeting', stages:[
+      {nodes:[{t:'Intake', n:'Value case, data classes, affected people and the human decision being touched.'}]},
+      {nodes:[{t:'Risk tier', k:'gate', n:'Minimal, limited or high, aligned to the policy taxonomy. The tier selects the controls.'}]},
+      {nodes:[{t:'agent.yaml', n:'The manifest: owner, autonomy, oversight, thresholds and review cadence. Machine readable by design.'}]},
+      {nodes:[{t:'Controls applied', n:'Tier drives approval requirements, dual control, retention, refusal topics and red-team suites.'}]},
+      {nodes:[{t:'Release gate', k:'gate', n:'The pipeline enforces the manifest. Governance that cannot fail a build is decoration.'}]},
+      {nodes:[{t:'Agent registry', n:'Every production agent with its owner, tier, evidence and last review date.'}]},
+      {nodes:[{t:'In-life review', k:'gate', n:'Quarterly reconfirmation. An agent nobody will reapprove is retired, not left running.'}]}
+    ], rail:[
+      {t:'Model + system cards', n:'Documented purpose, limits and known failure modes, published to the people relying on the agent.'},
+      {t:'Incident process', n:'A defined path for a wrong action or a leaked answer, including who can switch the agent off.'}]}
+  };
+
+  function nodeBtn(n){
+    var b = document.createElement('button');
+    b.className = 'dg-node' + (n.k ? ' k-' + n.k : '');
+    b.type = 'button';
+    b.textContent = n.t;
+    b.dataset.note = n.n || '';
+    return b;
+  }
+
+  document.querySelectorAll('.diagram').forEach(function(host){
+    var d = D[host.dataset.diagram];
+    if(!d) return;
+    var head = document.createElement('div');
+    head.className = 'dg-head';
+    head.innerHTML = '<span>Schematic &middot; ' + d.cap + '</span>';
+    var scroll = document.createElement('div'); scroll.className = 'dg-scroll';
+    var flow = document.createElement('div'); flow.className = 'dg-flow';
+    d.stages.forEach(function(st, i){
+      if(i){
+        var a = document.createElement('div'); a.className = 'dg-arrow'; a.textContent = '\u2192';
+        flow.appendChild(a);
+      }
+      var stage = document.createElement('div'); stage.className = 'dg-stage';
+      st.nodes.forEach(function(n){ stage.appendChild(nodeBtn(n)); });
+      flow.appendChild(stage);
+    });
+    scroll.appendChild(flow);
+    var note = document.createElement('div');
+    note.className = 'dg-note';
+    note.innerHTML = '<b>Select a block</b>Each one names a component you have to build, buy or decide not to have.';
+    host.appendChild(head); host.appendChild(scroll);
+    if(d.rail && d.rail.length){
+      var rail = document.createElement('div'); rail.className = 'dg-rail';
+      var em = document.createElement('em'); em.textContent = 'Attached';
+      rail.appendChild(em);
+      d.rail.forEach(function(n){ n.k = 'store'; rail.appendChild(nodeBtn(n)); });
+      host.appendChild(rail);
+    }
+    host.appendChild(note);
+    host.addEventListener('click', function(e){
+      var btn = e.target.closest('.dg-node');
+      if(!btn) return;
+      host.querySelectorAll('.dg-node').forEach(function(x){ x.classList.toggle('is-on', x === btn); });
+      note.innerHTML = '<b>' + btn.textContent + '</b>' + (btn.dataset.note || 'No detail recorded.');
+    });
+  });
+
+  // ---------- copy ----------
+  document.querySelectorAll('.copy').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var pre = btn.closest('.codewrap').querySelector('pre');
+      var text = pre.dataset.raw || pre.textContent;
+      var done = function(){
+        btn.textContent = 'Copied';
+        btn.classList.add('done');
+        setTimeout(function(){ btn.textContent = 'Copy'; btn.classList.remove('done'); }, 1600);
+      };
+      if(navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(text).then(done, fallback);
+      } else { fallback(); }
+      function fallback(){
+        var ta = document.createElement('textarea');
+        ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+        document.body.appendChild(ta); ta.select();
+        try { document.execCommand('copy'); done(); } catch(e){ btn.textContent = 'Select manually'; }
+        document.body.removeChild(ta);
+      }
+    });
+  });
+
+  // ---------- lightweight highlighter ----------
+  var PY_KW = ['def','class','return','if','elif','else','for','while','import','from','as',
+    'with','async','await','try','except','raise','yield','in','not','and','or','is','None',
+    'True','False','lambda','pass','break','continue','assert','global'];
+  var SQL_KW = ['CREATE','TABLE','CATALOG','SCHEMA','IF','NOT','EXISTS','USING','PARTITIONED',
+    'BY','SELECT','FROM','WHERE','GROUP','ORDER','DESC','AS','CASE','WHEN','THEN','ELSE','END',
+    'COUNT','AVG','SUM','INTERVAL','DAYS','STRING','ARRAY','FLOAT','TIMESTAMP','DATE','BIGINT',
+    'INT','BOOLEAN','DECIMAL','NULL','current_date'];
+
+  function esc(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
+
+  function paint(raw, lang){
+    var out = esc(raw);
+    if(lang === 'yaml' || lang === 'text'){
+      out = out.replace(/(#[^\n]*)|("[^"\n]*"|'[^'\n]*')|^(\s*-?\s*[\w.\-]+)(:)/gm,
+        function(m, c, s, key, colon){
+          if(c) return '<span class="tok-c">' + c + '</span>';
+          if(s) return '<span class="tok-s">' + s + '</span>';
+          return key.replace(/([\w.\-]+)$/, '<span class="tok-y">$1</span>') + colon;
+        });
+      return out;
+    }
+    if(lang === 'sql'){
+      out = out.replace(/(--[^\n]*)|('[^'\n]*')|\b([A-Za-z_]+)\b|\b(\d+)\b/g,
+        function(m, c, s, word, num){
+          if(c) return '<span class="tok-c">' + c + '</span>';
+          if(s) return '<span class="tok-s">' + s + '</span>';
+          if(num) return '<span class="tok-n">' + num + '</span>';
+          return SQL_KW.indexOf(word) > -1 ? '<span class="tok-k">' + word + '</span>' : word;
+        });
+      return out;
+    }
+    out = out.replace(/(#[^\n]*)|("""[\s\S]*?"""|"[^"\n]*"|'[^'\n]*')|(@[\w.]+)|\b([A-Za-z_]\w*)\b|\b(\d+\.?\d*)\b/g,
+      function(m, c, s, dec, word, num){
+        if(c) return '<span class="tok-c">' + c + '</span>';
+        if(s) return '<span class="tok-s">' + s + '</span>';
+        if(dec) return '<span class="tok-d">' + dec + '</span>';
+        if(num) return '<span class="tok-n">' + num + '</span>';
+        return PY_KW.indexOf(word) > -1 ? '<span class="tok-k">' + word + '</span>' : word;
+      });
+    return out;
+  }
+
+  document.querySelectorAll('pre[data-lang]').forEach(function(pre){
+    var raw = pre.textContent;
+    pre.dataset.raw = raw;
+    pre.innerHTML = paint(raw, pre.dataset.lang);
+  });
+})();
+</script>
+</body>
+</html>
