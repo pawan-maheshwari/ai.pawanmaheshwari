@@ -78,6 +78,19 @@
     display: flex;
     gap: 36px;
     list-style: none;
+    align-items: center;
+  }
+  .nav-links a { white-space: nowrap; }
+  /* The link count has grown; tighten the row before it wraps to two lines. */
+  @media (max-width: 1500px) { .nav-links { gap: 26px; } }
+  @media (max-width: 1320px) {
+    nav { padding: 18px 32px; }
+    .nav-links { gap: 18px; }
+    .nav-links a { font-size: 10px; letter-spacing: 0.08em; }
+  }
+  @media (max-width: 1120px) {
+    .nav-links { gap: 14px; }
+    .nav-links a { font-size: 9.5px; letter-spacing: 0.05em; }
   }
   .nav-links a {
     font-family: var(--mono);
@@ -1035,19 +1048,19 @@
   /* ── Milestone rail ── */
   .ms-rail {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(5, 1fr);
     gap: 0;
     margin-top: 54px;
     border-top: 1px solid var(--fog-2);
     border-bottom: 1px solid var(--fog-2);
   }
   .ms-item {
-    padding: 30px 26px 30px 0;
+    padding: 30px 20px 30px 0;
     border-right: 1px solid var(--fog-2);
     position: relative;
   }
   .ms-item:last-child { border-right: none; }
-  .ms-item:not(:first-child) { padding-left: 26px; }
+  .ms-item:not(:first-child) { padding-left: 20px; }
   .ms-year {
     font-family: var(--mono);
     font-size: 10px;
@@ -1058,7 +1071,7 @@
   }
   .ms-title {
     font-family: var(--serif);
-    font-size: 25px;
+    font-size: 23px;
     line-height: 1.15;
     color: var(--ink);
     margin-bottom: 9px;
@@ -1323,8 +1336,8 @@
 
   @media (max-width: 1000px) {
     .ms-rail { grid-template-columns: 1fr 1fr; }
-    .ms-item:nth-child(2) { border-right: none; }
-    .ms-item:nth-child(-n+2) { border-bottom: 1px solid var(--fog-2); }
+    .ms-item:nth-child(even) { border-right: none; }
+    .ms-item:not(:nth-last-child(-n+1)) { border-bottom: 1px solid var(--fog-2); }
     .gal-grid { grid-template-columns: 1fr 1fr; }
     .gal-card.featured { grid-column: span 2; }
     .gal-more { grid-template-columns: 1fr 1fr; }
@@ -2537,6 +2550,143 @@
     margin-top: 56px;
   }
 
+  /* PROOF — measurement paper */
+  .project-card.proof {
+    grid-column: 1 / -1;
+    background: var(--cream);
+    border: 1px solid var(--fog-2);
+    border-top: 4px solid var(--ember);
+    padding: 46px 44px 40px;
+    color: var(--ink);
+    display: grid;
+    grid-template-columns: 1.25fr 1fr;
+    gap: 46px;
+    align-items: center;
+  }
+  .project-card.proof::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: linear-gradient(rgba(10,10,15,0.05) 1px, transparent 1px);
+    background-size: 100% 30px;
+    opacity: 0.6;
+    pointer-events: none;
+  }
+  .project-card.proof > * { position: relative; z-index: 1; }
+
+  .project-card.proof .proj-eyebrow {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--ember);
+    margin-bottom: 18px;
+  }
+  .project-card.proof .proj-title {
+    font-family: var(--serif);
+    font-size: 46px;
+    line-height: 1.02;
+    font-weight: 300;
+    color: var(--ink);
+    margin-bottom: 8px;
+  }
+  .project-card.proof .proj-subtitle {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 20px;
+    color: var(--teal);
+    margin-bottom: 18px;
+  }
+  .project-card.proof .proj-desc {
+    font-family: var(--sans);
+    font-size: 14.5px;
+    line-height: 1.72;
+    color: var(--ink-soft);
+    opacity: 0.85;
+    margin-bottom: 26px;
+    max-width: 56ch;
+  }
+  .project-card.proof .proj-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 24px;
+    border: 1px solid rgba(196,74,42,0.5);
+    color: var(--ember);
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+  }
+  .project-card.proof:hover .proj-btn {
+    background: var(--ember);
+    border-color: var(--ember);
+    color: var(--cream);
+  }
+
+  .proof-ladder { display: flex; flex-direction: column; gap: 6px; }
+  .proof-rung {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    padding: 10px 14px;
+    background: #fff;
+    border: 1px solid var(--fog-2);
+    border-left: 2px solid var(--fog-2);
+    transition: border-left-color 0.3s ease, transform 0.3s ease;
+  }
+  .project-card.proof:hover .proof-rung { border-left-color: var(--ember); }
+  .proof-rung .rung-key {
+    font-family: var(--serif);
+    font-size: 22px;
+    line-height: 1;
+    color: var(--ember);
+    width: 16px;
+    flex-shrink: 0;
+  }
+  .proof-rung .rung-text {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: 0.08em;
+    color: var(--ink-soft);
+    opacity: 0.9;
+  }
+
+  .proof-stats {
+    display: flex;
+    gap: 26px;
+    margin-top: 18px;
+    padding-top: 16px;
+    border-top: 1px solid var(--fog-2);
+    flex-wrap: wrap;
+  }
+  .proof-stat-num {
+    display: block;
+    font-family: var(--serif);
+    font-size: 27px;
+    color: var(--ember);
+    line-height: 1;
+  }
+  .proof-stat-lbl {
+    display: block;
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    opacity: 0.55;
+    margin-top: 6px;
+  }
+  @media (max-width: 900px) {
+    .project-card.proof { grid-template-columns: 1fr; gap: 28px; padding: 36px 26px 32px; }
+    .project-card.proof .proj-title { font-size: 34px; }
+    .proof-stats { gap: 18px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .proof-rung { transition: none; }
+  }
+
   /* AGENTIC AI FACTORY — blueprint floor */
   .project-card.factory {
     grid-column: 1 / -1;
@@ -2923,6 +3073,7 @@
     <li><a href="#card-odyssey">AI Odyssey</a></li>
     <li><a href="#card-games">AI Games</a></li>
     <li><a href="agentic-ai-factory.html" target="_blank" rel="noopener">AI Factory</a></li>
+    <li><a href="proof-framework.html" target="_blank" rel="noopener">PROOF</a></li>
     <li><a href="#achievements">Achievements</a></li>
     <li><a href="#aishorts">AI Shorts</a></li>
     <li><a href="#contact">Connect</a></li>
@@ -3458,6 +3609,11 @@
       <p class="ms-note">An enterprise reference architecture and build kit for shipping governed, reusable AI agents. <a href="agentic-ai-factory.html">Open the build kit</a>.</p>
     </div>
     <div class="ms-item">
+      <div class="ms-year">2026</div>
+      <div class="ms-title">The PROOF framework</div>
+      <p class="ms-note">A causal field method for proving whether Copilot changed the program, not just whether people liked it. <a href="proof-framework.html">Read the framework</a>.</p>
+    </div>
+    <div class="ms-item">
       <div class="ms-year">Ongoing</div>
       <div class="ms-title">Planet AI LLP</div>
       <p class="ms-note">Founded to run the World of AI initiative &mdash; AI literacy, tools and games built to be free and open to everyone.</p>
@@ -3875,6 +4031,36 @@
       </div>
     </a>
 
+    <!-- PROOF FRAMEWORK -->
+    <a href="proof-framework.html" id="card-proof" class="project-card proof" target="_blank" rel="noopener">
+      <div>
+        <div class="proj-eyebrow">Causal Field Framework &middot; Measurement</div>
+        <div class="proj-title">PROOF</div>
+        <div class="proj-subtitle">Did they like it, or did it change the program?</div>
+        <p class="proj-desc">
+          Most Copilot programs measure whether program managers enjoy the tool. Almost none can say whether the tool
+          moved the delivery numbers. PROOF closes that gap with five layers &mdash; run the evaluation in live
+          programs, randomise or declare the distance from it, promote outcomes over opinions, correct for who
+          self-selects in, and falsify your own result. Built on the HBS AI Institute's causal field evaluation work,
+          applied to enterprise program management.
+        </p>
+        <div class="proj-btn"><span>Read the framework</span></div>
+      </div>
+
+      <div class="proof-ladder" aria-hidden="true">
+        <div class="proof-rung"><span class="rung-key">P</span><span class="rung-text">Place it in the field</span></div>
+        <div class="proof-rung"><span class="rung-key">R</span><span class="rung-text">Randomise &mdash; or declare the distance</span></div>
+        <div class="proof-rung"><span class="rung-key">O</span><span class="rung-text">Outcomes over opinions</span></div>
+        <div class="proof-rung"><span class="rung-key">O</span><span class="rung-text">Offset the selection</span></div>
+        <div class="proof-rung"><span class="rung-key">F</span><span class="rung-text">Falsify, and face the trade-off</span></div>
+        <div class="proof-stats">
+          <div><span class="proof-stat-num">5</span><span class="proof-stat-lbl">Layers</span></div>
+          <div><span class="proof-stat-num">5</span><span class="proof-stat-lbl">Instruments</span></div>
+          <div><span class="proof-stat-num">90</span><span class="proof-stat-lbl">Day operating plan</span></div>
+        </div>
+      </div>
+    </a>
+
   </div>
 </section>
 
@@ -3941,6 +4127,7 @@
     <li><a href="#card-odyssey">AI Odyssey</a></li>
     <li><a href="#card-games">AI Games</a></li>
     <li><a href="agentic-ai-factory.html" target="_blank" rel="noopener">AI Factory</a></li>
+    <li><a href="proof-framework.html" target="_blank" rel="noopener">PROOF</a></li>
     <li><a href="#achievements">Achievements</a></li>
     <li><a href="#aishorts">AI Shorts</a></li>
     <li><a href="#contact">Contact</a></li>
