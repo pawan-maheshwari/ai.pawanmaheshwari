@@ -73,6 +73,7 @@ button{font:inherit;color:inherit}
 .nav.scrolled{border-bottom-color:var(--line)}
 .nav-name{font-family:var(--display);font-weight:500;font-size:15px;letter-spacing:-.01em;justify-self:start}
 .nav-name span{color:var(--mute);font-weight:400}
+@media (max-width:480px){.nav-name span{display:none}}
 .nav-mark{font-family:var(--display);font-weight:600;font-size:15px;letter-spacing:-.02em}
 .nav-mark i{font-style:normal;color:var(--blue)}
 .nav-right{justify-self:end;display:flex;align-items:center;gap:22px}
@@ -431,6 +432,13 @@ section{position:relative}
 .tag{font-family:var(--mono);font-size:10.5px;padding:3px 9px;border:1px solid var(--line);border-radius:999px;color:var(--mute)}
 .modal-footer{padding:18px clamp(20px,4vw,48px);border-top:1px solid var(--line);font-family:var(--mono);font-size:10.5px;letter-spacing:.04em;color:var(--mute)}
 body.locked{overflow:hidden}
+/* back to top */
+.to-top{position:fixed;right:max(16px,env(safe-area-inset-right));bottom:max(18px,env(safe-area-inset-bottom));z-index:40;width:48px;height:48px;border-radius:50%;border:0;background:var(--ink);color:var(--paper);display:grid;place-items:center;cursor:pointer;opacity:0;transform:translateY(14px);pointer-events:none;transition:opacity .35s var(--ease),transform .35s var(--ease),background .2s;box-shadow:0 8px 24px -10px rgba(0,0,0,.45)}
+.to-top.show{opacity:1;transform:none;pointer-events:auto}
+.to-top:hover,.to-top:active{background:var(--blue);color:var(--on-blue)}
+.to-top svg{width:18px;height:18px}
+body.locked .to-top{opacity:0;pointer-events:none}
+
 </style>
 </head>
 <body>
@@ -888,6 +896,8 @@ body.locked{overflow:hidden}
   <div class="wordmark" aria-hidden="true">Pawan <span class="serif">Maheshwari</span></div>
 </footer>
 
+<button class="to-top" id="toTop" aria-label="Back to top"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button>
+
 <!-- CERT LIGHTBOX -->
 <div class="lb" id="lb" role="dialog" aria-modal="true" aria-label="Certificate viewer">
   <button class="x" aria-label="Close">✕</button>
@@ -1253,7 +1263,9 @@ body.locked{overflow:hidden}
   });
   /* nav border + active link */
   var nav=document.getElementById('nav');
-  var onScroll=function(){nav.classList.toggle('scrolled',scrollY>10)};
+  var tt=document.getElementById('toTop');
+  var onScroll=function(){nav.classList.toggle('scrolled',scrollY>10);tt.classList.toggle('show',scrollY>innerHeight*0.8)};
+  tt.addEventListener('click',function(){window.scrollTo({top:0,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'})});
   addEventListener('scroll',onScroll,{passive:true});onScroll();
   var links=[].slice.call(document.querySelectorAll('.nav-links a'));
   if('IntersectionObserver' in window){
