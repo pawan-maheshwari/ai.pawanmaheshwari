@@ -83,6 +83,7 @@
   .nav-links a { white-space: nowrap; }
   /* The link count has grown; tighten the row before it wraps to two lines. */
   @media (max-width: 1500px) { .nav-links { gap: 26px; } }
+  @media (max-width: 1700px) { .nav-links .nav-sec { display: none; } }
   @media (max-width: 1320px) {
     nav { padding: 18px 32px; }
     .nav-links { gap: 18px; }
@@ -3057,6 +3058,53 @@
     #projects { padding: 70px 24px; }
   }
 
+
+  /* ===== RESEARCH & PAPERS (Oct 2026) ===== */
+  #research { background: var(--cream); }
+  .research-intro { max-width: 640px; color: var(--ink-soft); font-size: 15px; line-height: 1.75; font-weight: 300; margin: -8px 0 48px; }
+  .paper-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1px; background: var(--fog-2); border: 1px solid var(--fog-2); }
+  .paper { background: var(--cream); padding: 34px 30px 30px; display: flex; flex-direction: column; gap: 14px; text-decoration: none; color: inherit; position: relative; transition: background .25s; }
+  a.paper:hover { background: #fff; }
+  a.paper:hover .paper-link { color: var(--ember); }
+  .paper.lead { grid-column: 1 / -1; background: var(--ink); color: var(--cream); padding: 44px 40px; }
+  .paper.lead:hover { background: #12121a; }
+  .paper-status { font-family: var(--mono); font-size: 10px; letter-spacing: .16em; text-transform: uppercase; display: inline-flex; align-items: center; gap: 8px; color: var(--teal); }
+  .paper-status::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+  .paper-status.review { color: #9a7a22; }
+  .paper-status.pub { color: var(--ember); }
+  .paper.lead .paper-status { color: var(--gold); }
+  .paper-title { font-family: var(--serif); font-size: 26px; line-height: 1.18; font-weight: 500; }
+  .paper.lead .paper-title { font-size: clamp(30px, 3.4vw, 44px); max-width: 900px; }
+  .paper-title em { color: var(--teal); }
+  .paper.lead .paper-title em { color: var(--gold); }
+  .paper-abs { font-size: 14px; line-height: 1.7; font-weight: 300; color: var(--ink-soft); flex: 1; }
+  .paper.lead .paper-abs { color: rgba(250,248,244,.72); max-width: 780px; font-size: 15px; }
+  .paper-foot { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding-top: 14px; border-top: 1px solid var(--fog-2); font-family: var(--mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: #77756f; }
+  .paper.lead .paper-foot { border-top-color: rgba(255,255,255,.12); color: rgba(250,248,244,.55); }
+  .paper-link { color: var(--teal); transition: color .2s; white-space: nowrap; }
+  .paper.lead .paper-link { color: var(--gold); }
+
+  /* ===== OPEN LAB — live products (Oct 2026) ===== */
+  #lab { background: var(--fog); }
+  .lab-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 40px; flex-wrap: wrap; margin-bottom: 44px; }
+  .lab-head p { max-width: 460px; color: var(--ink-soft); font-size: 15px; line-height: 1.75; font-weight: 300; }
+  .lab-filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 28px; }
+  .lab-filter { font-family: var(--mono); font-size: 10px; letter-spacing: .14em; text-transform: uppercase; padding: 9px 16px; border: 1px solid rgba(10,10,15,.18); background: transparent; color: var(--ink); cursor: pointer; transition: all .2s; }
+  .lab-filter:hover { border-color: var(--teal); color: var(--teal); }
+  .lab-filter.on { background: var(--ink); color: var(--cream); border-color: var(--ink); }
+  .lab-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 18px; }
+  .lab-card { background: var(--cream); border: 1px solid var(--fog-2); padding: 26px 24px 22px; display: flex; flex-direction: column; gap: 10px; text-decoration: none; color: var(--ink); transition: transform .25s, box-shadow .25s, border-color .25s; }
+  .lab-card:hover { transform: translateY(-4px); box-shadow: 0 18px 40px -22px rgba(10,10,15,.35); border-color: var(--gold); }
+  .lab-card[hidden] { display: none; }
+  .lab-top { display: flex; justify-content: space-between; align-items: center; }
+  .lab-kind { font-family: var(--mono); font-size: 9.5px; letter-spacing: .16em; text-transform: uppercase; color: var(--teal); }
+  .lab-live { font-family: var(--mono); font-size: 9px; letter-spacing: .12em; text-transform: uppercase; color: #3d8a5a; display: inline-flex; align-items: center; gap: 6px; }
+  .lab-live::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: #3d8a5a; box-shadow: 0 0 0 3px rgba(61,138,90,.18); }
+  .lab-name { font-family: var(--serif); font-size: 25px; font-weight: 500; line-height: 1.15; }
+  .lab-desc { font-size: 13.5px; line-height: 1.65; font-weight: 300; color: var(--ink-soft); flex: 1; }
+  .lab-url { font-family: var(--mono); font-size: 10.5px; color: #77756f; padding-top: 12px; border-top: 1px solid var(--fog-2); display: flex; justify-content: space-between; }
+  .lab-card:hover .lab-url span:last-child { color: var(--ember); }
+  @media (max-width: 760px) { .paper.lead { padding: 34px 26px; } .lab-head { margin-bottom: 30px; } }
 </style>
 </head>
 <body>
@@ -3068,12 +3116,14 @@
     <li><a href="#about">About</a></li>
     <li><a href="#expertise">Expertise</a></li>
     <li><a href="#writing">Writing</a></li>
+    <li><a href="#research">Research</a></li>
+    <li><a href="#lab">Open Lab</a></li>
     <li><a href="#timeline">Journey</a></li>
-    <li><a href="#tool">StratIQ Tool</a></li>
+    <li class="nav-sec"><a href="#tool">StratIQ Tool</a></li>
     <li><a href="#card-odyssey">AI Odyssey</a></li>
-    <li><a href="#card-games">AI Games</a></li>
+    <li class="nav-sec"><a href="#card-games">AI Games</a></li>
     <li><a href="agentic-ai-factory.html" target="_blank" rel="noopener">AI Factory</a></li>
-    <li><a href="proof-framework.html" target="_blank" rel="noopener">PROOF</a></li>
+    <li class="nav-sec"><a href="proof-framework.html" target="_blank" rel="noopener">PROOF</a></li>
     <li><a href="#achievements">Achievements</a></li>
     <li><a href="#aishorts">AI Shorts</a></li>
     <li><a href="#contact">Connect</a></li>
@@ -3084,7 +3134,7 @@
 <!-- HERO -->
 <section id="hero">
   <div class="hero-left">
-    <div class="hero-eyebrow">AI Transformation Leader · TCS · Bengaluru</div>
+    <div class="hero-eyebrow">AI Transformation Leader · TCS · Delivery Partner, South Africa · AI Champion, MEA</div>
     <h1 class="hero-name">
       Pawan<br>
       <em>Maheshwari</em>
@@ -3512,6 +3562,46 @@
   </div>
 </section>
 
+<!-- RESEARCH & PAPERS -->
+<section id="research">
+  <div class="section-label">Research &amp; Papers</div>
+  <h2 class="section-title">Measured, <em>not claimed</em></h2>
+  <p class="research-intro">Peer-reviewed and independent work on how AI should be measured, governed and adopted &mdash; written to survive a hostile fact-checker, with every material claim sourced.</p>
+  <div class="paper-grid">
+    <a class="paper lead" href="https://world-of-ai.co.in/green-llm.html" target="_blank" rel="noopener">
+      <span class="paper-status">Selected for presentation &middot; IIM Bangalore BAI Conference 2026 &middot; 17&ndash;19 Dec</span>
+      <h3 class="paper-title">The Green LLM Imperative: Why Adoption Must Be <em>Measured Rather Than Claimed</em></h3>
+      <p class="paper-abs">Enterprises are adopting large language models faster than they can account for their environmental cost. The paper introduces the GREEN-LLM Index, a scoring instrument that turns energy, water and carbon intensity of real LLM usage into a single, auditable &ldquo;how green is your LLM use&rdquo; score, with concrete levers to improve it.</p>
+      <div class="paper-foot"><span>Sustainability &middot; Responsible AI</span><span class="paper-link">Try the GREEN-LLM instrument &rarr;</span></div>
+    </a>
+    <a class="paper" href="https://doi.org/10.5281/zenodo.23051176" target="_blank" rel="noopener">
+      <span class="paper-status pub">White paper &middot; Zenodo &middot; DOI</span>
+      <h3 class="paper-title">Assay: Validating <em>LLM vendor claims</em></h3>
+      <p class="paper-abs">A method for testing launch claims on accuracy, cost, tokens and latency against your own tasks, and grading each claim with a statistically grounded verdict. Co-authored with Bhavin Maheshwari.</p>
+      <div class="paper-foot"><span>Evaluation</span><span class="paper-link">Read on Zenodo &rarr;</span></div>
+    </a>
+    <a class="paper" href="#contact">
+      <span class="paper-status review">Under review &middot; Global Africa Journal &middot; 2nd ed.</span>
+      <h3 class="paper-title">Ambition, Absence and Arithmetic: <em>the state of AI in South Africa and across Africa</em></h3>
+      <p class="paper-abs">Investment, adoption and policy mapped across the continent, with a closer look at the five leading African AI economies. Revised after independent peer review; every reference graded A&ndash;D for strength of support.</p>
+      <div class="paper-foot"><span>Policy &middot; Africa</span><span class="paper-link">Request a copy &rarr;</span></div>
+    </a>
+    <a class="paper" href="#contact">
+      <span class="paper-status">Reflection paper &middot; Oct 2026</span>
+      <h3 class="paper-title">The Right to Know in the <em>Age of AGI</em></h3>
+      <p class="paper-abs">A reflection on responsible usage: what people are owed when the systems advising them become more capable than the people overseeing them, drawing on AI Odyssey and the GREEN-LLM Index as worked examples.</p>
+      <div class="paper-foot"><span>Ethics &middot; Governance</span><span class="paper-link">Request a copy &rarr;</span></div>
+    </a>
+    <a class="paper" href="https://www.linkedin.com/in/pawan-maheshwari-4b9b4715" target="_blank" rel="noopener">
+      <span class="paper-status pub">C-suite case study &middot; LinkedIn</span>
+      <h3 class="paper-title">AI in Retail: <em>From Pilots to Profit</em></h3>
+      <p class="paper-abs">Why most retail AI stalls at the pilot stage, and what the retailers who reach profit do differently in data, operating model and measurement.</p>
+      <div class="paper-foot"><span>Retail &middot; Strategy</span><span class="paper-link">Read on LinkedIn &rarr;</span></div>
+    </a>
+  </div>
+</section>
+
+
 <!-- TIMELINE -->
 <section id="timeline">
   <div class="timeline-header">
@@ -3527,7 +3617,20 @@
   <div class="tl-track">
     <div class="tl-item" data-tl>
       <div class="tl-dot"></div>
-      <div class="tl-period">Current — TCS</div>
+      <div class="tl-period">Sept 2026 — Current · TCS</div>
+      <div class="tl-role">Delivery Partner, South Africa &middot; AI Champion, MEA</div>
+      <div class="tl-company">Tata Consultancy Services</div>
+      <div class="tl-body">
+        Leading customer engagement across TCS South Africa and championing AI adoption for the Middle East &amp; Africa region &mdash; turning AI strategy into delivered, measured outcomes for clients.
+      </div>
+      <div class="tl-achievements">
+        <span class="tl-ach">South Africa Region</span>
+        <span class="tl-ach">AI Champion · MEA</span>
+      </div>
+    </div>
+    <div class="tl-item" data-tl>
+      <div class="tl-dot"></div>
+      <div class="tl-period">Before Sept 2026 — TCS</div>
       <div class="tl-role">Service Delivery Manager</div>
       <div class="tl-company">Tata Consultancy Services</div>
       <div class="tl-body">
@@ -4098,6 +4201,104 @@
   </div>
 </section>
 
+<!-- OPEN LAB -->
+<section id="lab">
+  <div class="lab-head">
+    <div>
+      <div class="section-label">Open Lab &middot; Live Products</div>
+      <h2 class="section-title">Built, shipped, <em>in use</em></h2>
+    </div>
+    <p>Every idea on this site has a working instrument behind it. These are live products and tools from planetAI LLP and my open repositories &mdash; free to try in the browser.</p>
+  </div>
+  <div class="lab-filters" role="tablist" aria-label="Filter products">
+    <button class="lab-filter on" data-f="all">All</button>
+    <button class="lab-filter" data-f="platform">Platforms</button>
+    <button class="lab-filter" data-f="governance">Responsible AI</button>
+    <button class="lab-filter" data-f="enterprise">Enterprise</button>
+    <button class="lab-filter" data-f="media">Media &amp; Learning</button>
+  </div>
+  <div class="lab-grid">
+    <a class="lab-card" data-cat="platform" href="https://world-of-ai.co.in" target="_blank" rel="noopener">
+      <div class="lab-top"><span class="lab-kind">Platform</span><span class="lab-live">Live</span></div>
+      <div class="lab-name">World of AI</div>
+      <p class="lab-desc">An atlas of accessible intelligence from planetAI LLP: one hub for daily AI news, career guidance, evaluation tools and learning.</p>
+      <div class="lab-url"><span>world-of-ai.co.in</span><span>Open &rarr;</span></div>
+    </a>
+    <a class="lab-card" data-cat="platform" href="https://dishacareerlab.com" target="_blank" rel="noopener">
+      <div class="lab-top"><span class="lab-kind">EdTech</span><span class="lab-live">Live</span></div>
+      <div class="lab-name">DISHA Career Lab</div>
+      <p class="lab-desc">Global 5-D career assessment for school students in India, Nepal, the UAE and South Africa, with country-specific reports and certificates.</p>
+      <div class="lab-url"><span>dishacareerlab.com</span><span>Open &rarr;</span></div>
+    </a>
+    <a class="lab-card" data-cat="platform" href="https://ai-university.co.in" target="_blank" rel="noopener">
+      <div class="lab-top"><span class="lab-kind">Learning</span><span class="lab-live">Live</span></div>
+      <div class="lab-name">AI Academia</div>
+      <p class="lab-desc">Free-to-learn AI tracks for kids, teens, professionals, leaders and elders, with paid certification and exclusive executive courses.</p>
+      <div class="lab-url"><span>ai-university.co.in</span><span>Open &rarr;</span></div>
+    </a>
+    <a class="lab-card" data-cat="governance" href="https://world-of-ai.co.in/assay.html" target="_blank" rel="noopener">
+      <div class="lab-top"><span class="lab-kind">Evaluation</span><span class="lab-live">Live</span></div>
+      <div class="lab-name">Assay</div>
+      <p class="lab-desc">LLM claim validation lab: every launch claim tested and stamped Hallmarked, Plated or Fool’s gold.</p>
+      <div class="lab-url"><span>world-of-ai.co.in/assay</span><span>Open &rarr;</span></div>
+    </a>
+    <a class="lab-card" data-cat="governance" href="https://world-of-ai.co.in/green-llm.html" target="_blank" rel="noopener">
+      <div class="lab-top"><span class="lab-kind">Sustainability</span><span class="lab-live">Live</span></div>
+      <div class="lab-name">GREEN-LLM Index</div>
+      <p class="lab-desc">Environmental accounting for language model use — score, scenarios and improvement levers.</p>
+      <div class="lab-url"><span>world-of-ai.co.in/green-llm</span><span>Open &rarr;</span></div>
+    </a>
+    <a class="lab-card" data-cat="governance" href="https://world-of-ai.co.in/harmonia.html" target="_blank" rel="noopener">
+      <div class="lab-top"><span class="lab-kind">Ethics</span><span class="lab-live">Live</span></div>
+      <div class="lab-name">HARMONIA</div>
+      <p class="lab-desc">Scores prompts and providers on ethical-AI principles on a Fibonacci scale, sonifies the result, and compares national AI roadmaps.</p>
+      <div class="lab-url"><span>world-of-ai.co.in/harmonia</span><span>Open &rarr;</span></div>
+    </a>
+    <a class="lab-card" data-cat="governance" href="https://pawan-maheshwari.github.io/S-T-E-E-R-Framework/" target="_blank" rel="noopener">
+      <div class="lab-top"><span class="lab-kind">Governance</span><span class="lab-live">Live</span></div>
+      <div class="lab-name">S.T.E.E.R. Framework</div>
+      <p class="lab-desc">AI governance validation instrument: Situate, Tension-test, Establish, Evidence, Roll out &amp; review — with a board-ready report.</p>
+      <div class="lab-url"><span>github.io/S-T-E-E-R-Framework</span><span>Open &rarr;</span></div>
+    </a>
+    <a class="lab-card" data-cat="enterprise" href="https://pawan-maheshwari.github.io/paita/" target="_blank" rel="noopener">
+      <div class="lab-top"><span class="lab-kind">Agentic AI</span><span class="lab-live">Live</span></div>
+      <div class="lab-name">PAITA</div>
+      <p class="lab-desc">Agentic AI for IT service management — an interactive demo of triage, resolution and change agents over ServiceNow and Jira.</p>
+      <div class="lab-url"><span>github.io/paita</span><span>Open &rarr;</span></div>
+    </a>
+    <a class="lab-card" data-cat="enterprise" href="https://pawan-maheshwari.github.io/leadership-style/" target="_blank" rel="noopener">
+      <div class="lab-top"><span class="lab-kind">Leadership</span><span class="lab-live">Live</span></div>
+      <div class="lab-name">LPI Self-Assessment</div>
+      <p class="lab-desc">Kouzes &amp; Posner’s Five Practices of Exemplary Leadership as a 30-item self-assessment, with a global leaders gallery.</p>
+      <div class="lab-url"><span>github.io/leadership-style</span><span>Open &rarr;</span></div>
+    </a>
+    <a class="lab-card" data-cat="media" href="https://aishorts.biz/ai-anchor.html" target="_blank" rel="noopener">
+      <div class="lab-top"><span class="lab-kind">Media</span><span class="lab-live">Live</span></div>
+      <div class="lab-name">AI Shorts Anchor Desk</div>
+      <p class="lab-desc">Daily AI news read live by an AI anchor, with sentiment-coded broadcast and a next-day prediction desk.</p>
+      <div class="lab-url"><span>aishorts.biz/ai-anchor</span><span>Open &rarr;</span></div>
+    </a>
+    <a class="lab-card" data-cat="media" href="https://aishorts.biz/ai-library.html" target="_blank" rel="noopener">
+      <div class="lab-top"><span class="lab-kind">Library</span><span class="lab-live">Live</span></div>
+      <div class="lab-name">The AI Athenaeum</div>
+      <p class="lab-desc">A library of AI literature for every age — read, listen and ask a live librarian.</p>
+      <div class="lab-url"><span>aishorts.biz/ai-library</span><span>Open &rarr;</span></div>
+    </a>
+    <a class="lab-card" data-cat="enterprise" href="https://pawan-maheshwari.github.io/LevelWatch/" target="_blank" rel="noopener">
+      <div class="lab-top"><span class="lab-kind">Markets</span><span class="lab-live">Live</span></div>
+      <div class="lab-name">LevelWatch</div>
+      <p class="lab-desc">Live price ladder and alert desk for NSE and US scrips.</p>
+      <div class="lab-url"><span>github.io/LevelWatch</span><span>Open &rarr;</span></div>
+    </a>
+  </div>
+</section>
+<script>
+(function(){var b=document.querySelectorAll('#lab .lab-filter'),c=document.querySelectorAll('#lab .lab-card');
+b.forEach(function(x){x.addEventListener('click',function(){b.forEach(function(y){y.classList.remove('on')});x.classList.add('on');var f=x.dataset.f;
+c.forEach(function(k){k.hidden=!(f==='all'||k.dataset.cat===f)});});});})();
+</script>
+
+
 
 <!-- AISHORTS -->
 <section id="aishorts">
@@ -4157,6 +4358,8 @@
     <li><a href="#about">About</a></li>
     <li><a href="#expertise">Expertise</a></li>
     <li><a href="#writing">Writing</a></li>
+    <li><a href="#research">Research</a></li>
+    <li><a href="#lab">Open Lab</a></li>
     <li><a href="#tool">StratIQ Tool</a></li>
     <li><a href="#card-odyssey">AI Odyssey</a></li>
     <li><a href="#card-games">AI Games</a></li>
